@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "checkJs": true,
+    "target": "es6"
+  },
+  "include": [
+    "**/*.js",
+    "libraries/*.js",
+    "libraries/@types/**/*.ts"
+  ]
+}
