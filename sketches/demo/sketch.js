@@ -42,7 +42,7 @@ class Plane {
 const planes = []
 
 function setup () {
-  createCanvas(400, 400)
+  createCanvas(PANE_WIDTH, PANE_HEIGHT)
   Array(21).fill(0).map((_, i) => {
     planes.push(new Plane(i * 20, i * 20))
   })
