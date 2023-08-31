@@ -1,3 +1,6 @@
+/**
+ * A container class to structure a standard 2d vector
+ */
 class Vec2 {
   /** @param {Number} x
    *  @param {Number} y 
@@ -8,7 +11,10 @@ class Vec2 {
   }
 }
 
-/** @param {String} color */
+/** 
+ * Gets the R, G, and B values from a valid RGB string
+ * @param {String} color 
+ * */
 function get_rgb(color) {
   let [r, g, b] = color.replace('rgb(', '')
     .replace(')', '')
@@ -19,10 +25,12 @@ function get_rgb(color) {
   return { r, g, b }
 }
 
-/** @param {String} a
-  * @param {String} b
-  * @param {Number} t
-  */
+/** 
+ * Interpolates between two RGB strings given a 't' parameter
+ * @param {String} a
+ * @param {String} b
+ * @param {Number} t
+ */
 function interpolate_color(a, b, t) {
   const rgb_a = get_rgb(a)
   const rgb_b = get_rgb(b)
