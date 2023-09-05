@@ -7,15 +7,18 @@ class Player extends GameObject {
     this.speed = speed
     this.shot_delay_ms = 500
     this.shot_timer = this.shot_delay_ms
+    this.collider = new Collider(pos, 30)
   }
 
   update() {
     super.update()
-    if (keyIsDown(65)) {
+    this.collider.pos = this.pos
+
+    if (keyIsDown(65) && this.pos.x > 15) {
       this.pos.x -= this.speed
     }
 
-    if (keyIsDown(68)) {
+    if (keyIsDown(68) && this.pos.x < PANE_WIDTH - 15) {
       this.pos.x += this.speed
     }
 
@@ -35,41 +38,11 @@ class Player extends GameObject {
     if (this.shot_timer >= this.shot_delay_ms) {
       this.shot_timer = 0
       game.objects.push(
-        new Projectile(
-          new Vec2(this.pos.x, this.pos.y - 20),
+        new Bullet(
+          new Vec2(this.pos.x, this.pos.y - 21),
           new Vec2(0, -1)
         )
       )
     }
-  }
-}
-
-class Projectile extends GameObject {
-  /** @param {Vec2} pos
-   *  @param {Vec2} dir 
-   *  @param {Number} speed
-   *  @param {Vec2} accel
-   */
-  constructor(pos, dir, speed = 10, accel = new Vec2()) {
-    super(pos)
-    this.dir = dir
-    this.speed = speed
-    this.accel = accel
-    this.lifetime = PANE_HEIGHT / speed + 20
-  }
-
-  update() {
-    super.update()
-    this.pos.x += this.speed * this.dir.x
-    this.pos.y += this.speed * this.dir.y
-    this.vel.x += this.accel.x
-    this.vel.y += this.accel.y
-    this.lifetime--
-  }
-
-  draw() {
-    super.draw()
-    fill('blue')
-    circle(this.pos.x, this.pos.y, 10)
   }
 }
