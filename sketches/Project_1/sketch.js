@@ -6,6 +6,10 @@ class GameManager {
 
   constructor() {
     this.setup_start()
+    this.player_sprite = create_player_sprite()
+    this.enemy_sprite = create_enemy_sprite()
+    this.bullet_sprite = create_bullet_sprite()
+    this.bomb_sprite = create_bomb_sprite()
   }
 
   setup_start() {
@@ -28,15 +32,17 @@ class GameManager {
       new Player(
         new Vec2(
           PANE_WIDTH / 2,
-          350
-        )
+          365
+        ),
+        this.player_sprite
       )
     ]
 
     Array(5).fill(0).map((_, i) => {
       this.objects.push(
         new Enemy(
-          new Vec2(i * 50 + 50, 40)
+          new Vec2(i * 50 + 50, 40),
+          this.enemy_sprite
         )
       )
     })
@@ -146,9 +152,8 @@ function mouseClicked() {
 /** @type {GameManager} */
 let game
 
-
 function setup() {
-  createCanvas(PANE_HEIGHT, PANE_WIDTH)
+  createCanvas(PANE_WIDTH, PANE_HEIGHT)
   game = new GameManager()
 }
 
