@@ -58,10 +58,16 @@ class GameManager {
         ACCENT_1
       ),
       new Button(
-        new Vec2(PANE_WIDTH / 2, 300),
-        new Vec2(200, 75),
+        new Vec2(100, 300),
+        new Vec2(175, 75),
         'Restart',
         this.setup_game.bind(this)
+      ),
+      new Button(
+        new Vec2(300, 300),
+        new Vec2(175, 75),
+        'Title Screen',
+        this.setup_start.bind(this)
       )
     ]
   }
@@ -76,10 +82,16 @@ class GameManager {
         ACCENT_1
       ),
       new Button(
-        new Vec2(PANE_WIDTH / 2, 300),
-        new Vec2(200, 75),
+        new Vec2(100, 300),
+        new Vec2(175, 75),
         'Restart',
         this.setup_game.bind(this)
+      ),
+      new Button(
+        new Vec2(300, 300),
+        new Vec2(175, 75),
+        'Title Screen',
+        this.setup_start.bind(this)
       )
     ]
   }
