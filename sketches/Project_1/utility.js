@@ -12,17 +12,17 @@ class Vec2 {
 }
 
 /** 
- * Gets the R, G, and B values from a valid RGB string
+ * Gets the R, G, B, and A values from a valid RGBA string
  * @param {String} color 
  * */
-function get_rgb(color) {
-  let [r, g, b] = color.replace('rgb(', '')
+function get_rgba(color) {
+  let [r, g, b, a] = color.replace('rgba(', '')
     .replace(')', '')
     .replace(' ', '')
     .split(',')
     .map(str => Number(str))
 
-  return { r, g, b }
+  return { r, g, b, a }
 }
 
 /** 
@@ -32,15 +32,15 @@ function get_rgb(color) {
  * @param {Number} t
  */
 function interpolate_color(a, b, t) {
-  const rgb_a = get_rgb(a)
-  const rgb_b = get_rgb(b)
+  const rgba_a = get_rgba(a)
+  const rgba_b = get_rgba(b)
 
   /** @param {String} prop
     * @param {Number} t
     */
   function color_val(prop, t) {
-    return Math.round(rgb_a[prop] * (1 - t) + rgb_b[prop] * t)
+    return Math.round(rgba_a[prop] * (1 - t) + rgba_b[prop] * t)
   }
 
-  return `rgb(${color_val('r', t)}, ${color_val('g', t)}, ${color_val('b', t)})`
+  return `rgba(${color_val('r', t)}, ${color_val('g', t)}, ${color_val('b', t)}, ${color_val('a', t)})`
 }

@@ -97,40 +97,47 @@ class GameManager {
   }
 
   frame() {
-    this.objects.forEach(obj => {
-      obj.draw()
-      obj.update()
-      if (obj instanceof Player) {
-        this.objects.forEach(obj_other => {
-          if (obj_other instanceof Bomb || obj_other instanceof Enemy) {
-            if (obj.collider.collides(obj_other.collider)) {
-              this.setup_lose()
-            }
-          }
-        })
-      } else if (obj instanceof Enemy) {
-        this.objects.forEach(obj_other => {
-          if (obj_other instanceof Bullet) {
-            if (obj.collider.collides(obj_other.collider)) {
-              game.objects = game.objects.filter(o => {
-                return (o !== obj) && (o !== obj_other)
-              })
-            }
-          } else if (obj_other instanceof Bomb) {
-            if (obj.collider.collides(obj_other.collider)) {
-              game.objects = game.objects.filter(o => {
-                return (o !== obj_other)
-              })
-            }
-          }
-        })
-      }
-    })
-
     switch (this.state) {
       case GameState.Start:
+        background(BACKGROUND)
+        this.objects.forEach(obj => {
+          obj.draw()
+          obj.update()
+        })
         break
       case GameState.Play:
+        background(bg)
+        this.objects.forEach(obj => {
+          obj.draw()
+          obj.update()
+
+          if (obj instanceof Player) {
+            this.objects.forEach(obj_other => {
+              if (obj_other instanceof Bomb || obj_other instanceof Enemy) {
+                if (obj.collider.collides(obj_other.collider)) {
+                  this.setup_lose()
+                }
+              }
+            })
+          } else if (obj instanceof Enemy) {
+            this.objects.forEach(obj_other => {
+              if (obj_other instanceof Bullet) {
+                if (obj.collider.collides(obj_other.collider)) {
+                  game.objects = game.objects.filter(o => {
+                    return (o !== obj) && (o !== obj_other)
+                  })
+                }
+              } else if (obj_other instanceof Bomb) {
+                if (obj.collider.collides(obj_other.collider)) {
+                  game.objects = game.objects.filter(o => {
+                    return (o !== obj_other)
+                  })
+                }
+              }
+            })
+          }
+        })
+
         this.objects = this.objects.filter(obj => {
           if (obj instanceof Projectile) {
             return obj.lifetime > 0
@@ -143,9 +150,11 @@ class GameManager {
           this.setup_win()
         }
         break
-      case GameState.Victory:
-        break
-      case GameState.Game_Over:
+      default:
+        this.objects.forEach(obj => {
+          obj.draw()
+          obj.update()
+        })
         break
     }
   }
@@ -164,12 +173,15 @@ function mouseClicked() {
 /** @type {GameManager} */
 let game
 
+let bg
+
 function setup() {
   createCanvas(PANE_WIDTH, PANE_HEIGHT)
   game = new GameManager()
+  bg = create_background_image()
 }
 
 function draw() {
-  background(BACKGROUND)
+  background(bg)
   game.frame()
 }

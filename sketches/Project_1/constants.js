@@ -5,10 +5,10 @@ const PANE_WIDTH = 400
 const PANE_HEIGHT = 400
 
 /** @type {String} */
-const BACKGROUND = 'rgb(31, 31, 31)'
+const BACKGROUND = 'rgba(45, 45, 45, 255)'
 
 /** @type {String} */
-const ACCENT_1 = 'rgb(255, 179, 181)'
+const ACCENT_1 = 'rgba(255, 179, 181, 255)'
 
 /** @type {String} */
-const ACCENT_2 = 'rgb(52, 0, 0)'
+const ACCENT_2 = 'rgba(52, 0, 0, 255)'

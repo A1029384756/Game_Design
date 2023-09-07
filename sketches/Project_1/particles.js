@@ -10,8 +10,8 @@ class Particle extends GameObject {
   */
   constructor(
     pos,
-    color = 'rgb(255, 255, 255)',
-    lifetime = 250,
+    color = 'rgba(255, 255, 255, 255)',
+    lifetime = 75,
     vel = new Vec2(random(-0.1, 0.1), random(-0.1, 0.1)),
     accel = new Vec2(random(-0.1, 0.1), random(-0.1, 0.1)),
   ) {
@@ -37,7 +37,7 @@ class Particle extends GameObject {
     this.life_remaining -= 1
 
     // Fades the color out to the background color over time
-    this.color = interpolate_color(this.color, BACKGROUND, (this.lifetime - this.life_remaining) / this.lifetime)
+    this.color = interpolate_color(this.color, 'rgba(45, 45, 45, 0)', (this.lifetime - this.life_remaining) / this.lifetime)
   }
 
   // Draw each particle on the screen according to its parameters
