@@ -18,15 +18,12 @@ class GameController {
     this.coin_sprite = coin_sprite()
     /** @type {Image} */
     this.rock_sprite = rock_sprite()
+    /** @type {Vector} */
+    this.player_pos = createVector()
     this.setup_game()
   }
 
   update() {
-    // Win condition
-    if (this.game_objects.filter(obj => obj instanceof Coin).length == 0) {
-      this.game_state = GameState.Victory
-    }
-
     switch (this.game_state) {
       case GameState.Play:
         this.update_play()
@@ -35,6 +32,12 @@ class GameController {
   }
 
   update_play() {
+    // Win condition
+    if (this.game_objects.filter(obj => obj instanceof Coin).length == 0) {
+      this.game_state = GameState.Victory
+      this.win_game()
+    }
+
     this.game_objects.forEach(obj => {
       obj.update()
     })
@@ -55,6 +58,8 @@ class GameController {
             obj.handle_interaction(message.entity)
           })
           break
+        case MessageType.Camera:
+          this.player_pos = message.entity.pos
         default:
           reportError(TypeError)
       }
@@ -62,6 +67,7 @@ class GameController {
   }
 
   setup_game() {
+    this.game_objects = []
     let map = get_level()
     map.forEach((row, y) => {
       row.split('').forEach((tile, x) => {
@@ -113,6 +119,7 @@ class GameController {
         }
       })
     })
+    this.game_state = GameState.Play
   }
 
   /** @param {Message} msg */
@@ -120,29 +127,77 @@ class GameController {
     this.message_queue.push(msg)
   }
 
-  end_game() {
+  win_game() {
     this.game_state = GameState.GameOver
+    this.game_objects = [
+      new GameText(
+        createVector(this.canvas.width / 2, 100),
+        'Game Over!',
+        'black'
+      ),
+      new Button(
+        createVector(this.canvas.width / 2, 300),
+        createVector(200, 100),
+        'Restart',
+        this.setup_game.bind(this),
+        'green'
+      )
+    ]
+  }
+
+  lose_game() {
+    this.game_state = GameState.GameOver
+    this.game_objects = [
+      new GameText(
+        createVector(this.canvas.width / 2, 100),
+        'Game Over!',
+        'black'
+      ),
+      new Button(
+        createVector(this.canvas.width / 2, 300),
+        createVector(200, 100),
+        'Restart',
+        this.setup_game.bind(this)
+      )
+    ]
   }
 
   draw() {
-    background(this.background_img.get(0, 0, this.canvas.width, this.canvas.width))
-    this.game_objects.forEach(obj => {
-      obj.draw()
-    })
-
-    // Debug info
-    noStroke()
-    fill('black')
-    textSize(30)
-    textStyle(BOLD)
-    textAlign(CENTER, CENTER)
-    text(floor(1/(deltaTime / 1000)), 30, 20)
-    if (this.game_state == GameState.GameOver) {
-      text('Game Over', 200, 350)
+    switch(this.game_state) {
+      case GameState.Play:
+        this.draw_play()
+        break
+      default:
+        this.draw_generic()
+        break
     }
   }
 
-  handle_mouse() {
+  draw_play() {
+    background('tan')
+    background(this.background_img.get(this.player_pos.x - this.canvas.width / 2 + 10, this.player_pos.y - this.canvas.height / 2 + 10, this.canvas.width, this.canvas.height))
+    translate(-this.player_pos.x + this.canvas.width / 2, -this.player_pos.y + this.canvas.height / 2)
+    this.game_objects.forEach(obj => {
+      obj.draw()
+    })
+    translate(this.player_pos.x - this.canvas.width / 2 - 10, this.player_pos.y - this.canvas.height / 2 - 10)
+  }
+
+  draw_generic() {
+    this.game_objects.forEach(obj => {
+      obj.draw()
+    })
+  }
+
+  /** @param {Vector} pos */
+  handle_mouse(pos) {
+    this.game_objects.forEach(obj => {
+      if (obj instanceof Button) {
+        if (obj.collides(pos)) {
+          obj.action()
+        }
+      }
+    })
   }
 }
 
@@ -172,6 +227,7 @@ class MessageType {
   static Spawn = new MessageType('spawn')
   static Delete = new MessageType('delete')
   static Interact = new MessageType('interact')
+  static Camera = new MessageType('camera')
 
   /** @param {String} name */
   constructor(name) {
@@ -180,4 +236,5 @@ class MessageType {
 }
 
 function mouseClicked() {
+  game_controller.handle_mouse(createVector(mouseX, mouseY))
 }

@@ -21,23 +21,31 @@ class Player extends GameObject {
     super.update()
     let dir = createVector()
     if (keyIsDown(UP_ARROW)) {
-      dir.y -= this.speed * deltaTime / 10
+      dir.y--
     }
     if (keyIsDown(DOWN_ARROW)) {
-      dir.y += this.speed * deltaTime / 10
+      dir.y++
     }
     if (keyIsDown(LEFT_ARROW)) {
-      dir.x -= this.speed * deltaTime / 10
+      dir.x--
     }
     if (keyIsDown(RIGHT_ARROW)) {
-      dir.x += this.speed * deltaTime / 10
+      dir.x++
     }
 
     if (dir.magSq() > 0) {
-      this.pos.x += dir.x
-      this.pos.y += dir.y
+      dir.normalize()
+      this.pos.x += dir.x * this.speed * deltaTime / 10
+      this.pos.y += dir.y * this.speed * deltaTime / 10
       this.facing_angle = -dir.angleBetween(createVector(1, 0))
     }
+
+    game_controller.add_message(
+      new Message(
+        MessageType.Camera,
+        this
+      )
+    )
   }
 
   draw() {
@@ -53,7 +61,7 @@ class Player extends GameObject {
   handle_interaction(rhs) {
     if (rhs instanceof Enemy) {
       if (this.collider.collides(rhs.collider)) {
-        game_controller.end_game()
+        game_controller.lose_game()
       }
     } else if (rhs instanceof Rock) {
       if (this.collider.collides(rhs.collider)) {
@@ -62,7 +70,6 @@ class Player extends GameObject {
         let dir = pos.sub(rhs_pos)
         this.pos.add(dir)
       }
-    } else if (rhs instanceof Coin) {
     }
   }
 }
