@@ -60,6 +60,7 @@ class GameController {
           break
         case MessageType.Camera:
           this.player_pos = message.entity.pos
+          break
         default:
           reportError(TypeError)
       }

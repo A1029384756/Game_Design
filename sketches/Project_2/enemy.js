@@ -32,7 +32,12 @@ class Enemy extends GameObject {
 
     switch (this.state) {
       case EnemyState.Wander:
-        this.pos_timer.update()
+        let pos = copy_vector(this.pos)
+        if (pos.sub(this.target_pos).magSq() < 3) {
+          this.update_target()
+        } else {
+          this.pos_timer.update()
+        }
         break
       case EnemyState.Chase:
         break
