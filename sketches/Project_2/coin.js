@@ -9,11 +9,6 @@ class Coin extends GameObject {
     this.sprite = sprite
     /* @type {Collider} */
     this.collider = new Collider(this.pos, this.sprite.width)
-    /* @type {Timer} */
-    this.notify_timer = new Timer(
-      250,
-      this.notify_entities.bind(this)
-    )
   }
 
   /** @param {GameObject} rhs */
@@ -27,17 +22,16 @@ class Coin extends GameObject {
           )
         )
       }
+    } else if (rhs instanceof Enemy) {
+      if (this.collider.collides(rhs.collider)) {
+        game_controller.add_message(
+          new Message(
+            MessageType.Delete,
+            rhs
+          )
+        )
+      }
     }
-  }
-
-  notify_entities() {
-    game_controller.add_message(
-      new Message(
-        MessageType.Interact,
-        this
-      )
-    )
-    this.notify_timer.reset()
   }
 }
 

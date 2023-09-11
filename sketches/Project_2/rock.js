@@ -9,21 +9,18 @@ class Rock extends GameObject {
     this.sprite = sprite
     /* @type {Collider} */
     this.collider = new Collider(this.pos, this.sprite.width)
-    /* @type {Timer} */
-    this.notify_timer = new Timer(
-      250,
-      this.notify_entities.bind(this)
-    )
   }
 
-  notify_entities() {
-    game_controller.add_message(
-      new Message(
-        MessageType.Interact,
-        this
-      )
-    )
-    this.notify_timer.reset()
+  /** @param {GameObject} rhs */
+  handle_interaction(rhs) {
+    if (rhs instanceof Player || rhs instanceof Enemy) {
+      if (this.collider.collides(rhs.collider)) {
+        let pos = copy_vector(this.pos)
+        let rhs_pos = copy_vector(rhs.pos)
+        let dir = rhs_pos.sub(pos)
+        rhs.pos.add(dir)
+      }
+    }
   }
 }
 

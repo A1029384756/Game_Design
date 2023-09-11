@@ -63,13 +63,6 @@ class Player extends GameObject {
       if (this.collider.collides(rhs.collider)) {
         game_controller.lose_game()
       }
-    } else if (rhs instanceof Rock) {
-      if (this.collider.collides(rhs.collider)) {
-        let pos = copy_vector(this.pos)
-        let rhs_pos = copy_vector(rhs.pos)
-        let dir = pos.sub(rhs_pos)
-        this.pos.add(dir)
-      }
     }
   }
 }
