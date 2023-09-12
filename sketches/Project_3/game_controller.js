@@ -17,7 +17,7 @@ class GameController {
         [
           new Enemy(),
           new Sprite(this.sprite_manager.get_sprite('player')),
-          new Transform(createVector((i * 20) % 400, i % 400)),
+          new Transform(createVector(Math.floor((i * 20) % 400), Math.floor(i % 400))),
           new Collider(10)
         ]
       )
@@ -45,12 +45,21 @@ class GameController {
     background('black')
     this.world.update()
 
-    if (this.timer > 250) {
+    if (this.timer > 1000) {
       this.timer = 0
       let rate = this.frametimes.reduce((a, b) => a + b) / this.frametimes.length
       framerate.html(`Framerate: ${Math.round(rate)}`)
       entity_count.html(`Entity Count: ${this.world.component_registry.entity_count}`)
       this.frametimes = []
+
+      this.world.spawn_entity(
+        [
+          new Enemy(),
+          new Sprite(this.sprite_manager.get_sprite('player')),
+          new Transform(createVector(200, 200)),
+          new Collider(10)
+        ]
+      )
     }
     this.frametimes.push(Math.round((1/deltaTime) * 1000))
     this.timer += deltaTime

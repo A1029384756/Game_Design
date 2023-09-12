@@ -8,7 +8,7 @@ class World {
 
   update() {
     this.systems.forEach(s => {
-      s.work(s.query_set.map(q => q.get_response(this.component_registry)))
+      s.work(s.query_set.map(q => q.response))
     })
   }
 
@@ -22,7 +22,16 @@ class World {
 
   /** @param {Component[]} components */
   spawn_entity(components) {
-    this.component_registry.spawn_entity(components)
+    let id = this.component_registry.spawn_entity(components)
+    this.systems.forEach(s => {
+      s.query_set.forEach(q => {
+        if (q.components.every(c =>
+          components.find(comp => comp.name == c.name) !== undefined
+        )) {
+          q.response.set(id, components)
+        }
+      })
+    })
   }
 
   /** @param {Entity} entity */
@@ -30,7 +39,7 @@ class World {
     this.component_registry.despawn_entity(entity)
     this.systems.forEach(s =>
       s.query_set.forEach(q => {
-        if (q.response !== undefined && q.response.has(entity)) {
+        if (q.response.has(entity)) {
           q.response.delete(entity)
         }
       }))

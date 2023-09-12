@@ -20,7 +20,10 @@ class Registry {
     }
   }
 
-  /** @param {Component[]} components */
+  /** 
+   * @param {Component[]} components 
+   * @returns {Entity} the id of the newly created entity
+   */
   spawn_entity(components) {
     let entity_id = this.id_generator.create_id()
     components.forEach(c => {
@@ -29,6 +32,7 @@ class Registry {
         .set(entity_id, c)
     })
     this.entity_count++
+    return entity_id
   }
 
   /** @param {Entity} entity */
