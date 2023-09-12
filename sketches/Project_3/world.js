@@ -1,6 +1,5 @@
 /**
- * @typedef {String} Entity
- * @typedef {Map<String, Component>} Entry
+ * @typedef {Number} Entity
  */
 
 class World {
@@ -28,5 +27,10 @@ class World {
   /** @param {Component[]} components */
   spawn_entity(components) {
     this.component_registry.spawn_entity(components)
+  }
+
+  /** @param {Entity} entity */
+  despawn_entity(entity) {
+    this.component_registry.despawn_entity(entity)
   }
 }

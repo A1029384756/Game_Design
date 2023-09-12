@@ -1,3 +1,7 @@
+/**
+ * @typedef {Map<Entity, Component>} Entry
+ */
+
 class Registry {
   constructor() {
     /** @type {Map<String, Entry>} */
@@ -28,10 +32,12 @@ class Registry {
 
   /** @param {Entity} entity */
   despawn_entity(entity) {
-    this.registered_components.forEach((c, e) => {
-      if (e === entity) {
-        c.delete(e)
-      }
+    this.registered_components.forEach(entry => {
+      entry.forEach((_, e) => {
+        if (e === entity) {
+          entry.delete(e)
+        }
+      })
     })
     this.entity_count--
   }
