@@ -27,11 +27,56 @@ class Render extends System {
       /** @type {Sprite} */
       // @ts-ignore
       let sprite = c_list.find(c => c instanceof Sprite)
-      /** @type {Vector} */
+      /** @type {Transform} */
       // @ts-ignore
-      let transform = c_list.find(c => c instanceof Vector)
+      let transform = c_list.find(c => c instanceof Transform)
 
-      image(sprite.img, transform.x, transform.y)
+      image(sprite.img, transform.v.x, transform.v.y)
+    })
+  }
+}
+
+class Gravity extends System {
+  constructor() {
+    super()
+    this.query = new Query([
+      new Transform()
+    ])
+  }
+
+  /**
+   * @param {QueryResult} r
+   */
+  work(r) {
+    r.forEach((c_list, _) => {
+      /** @type {Transform} */
+      // @ts-ignore
+      let transform = c_list.find(c => c instanceof Transform)
+      transform.v.y += 10
+    })
+  }
+}
+
+
+class Wrapping extends System {
+  constructor() {
+    super()
+    this.query = new Query([
+      new Transform()
+    ])
+  }
+
+  /**
+   * @param {QueryResult} r
+   */
+  work(r) {
+    r.forEach((c_list, _) => {
+      /** @type {Transform} */
+      // @ts-ignore
+      let transform = c_list.find(c => c instanceof Transform)
+      if (transform.v.y > 410) {
+        transform.v.y = -10
+      }
     })
   }
 }
