@@ -45,7 +45,7 @@ class GameController {
     background('black')
     this.world.update()
 
-    if (this.timer > 1000) {
+    if (this.timer > 250) {
       this.timer = 0
       let rate = this.frametimes.reduce((a, b) => a + b) / this.frametimes.length
       framerate.html(`Framerate: ${Math.round(rate)}`)
