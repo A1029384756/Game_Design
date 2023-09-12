@@ -9,7 +9,10 @@ class Query {
     this.response = undefined
   }
 
-  /** @param {Registry} registry */
+  /** 
+   * @param {Registry} registry 
+   * @returns QueryResponse
+   */
   get_response(registry) {
     if (this.response !== undefined) {
       return this.response

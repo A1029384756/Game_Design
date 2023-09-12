@@ -9,26 +9,35 @@ class GameController {
     this.world.register_system(new Render())
     this.world.register_system(new Gravity())
     this.world.register_system(new Wrapping())
+    this.world.register_system(new Collision())
 
-    for (let i = 0; i < 9000; i++) {
+    for (let i = 0; i < 3000; i++) {
       this.world.spawn_entity(
         [
           new Player(),
           new Sprite(this.sprite_manager.get_sprite('player')),
-          new Transform(createVector((i * 20) % 400, 200 + i))
+          new Transform(createVector((i * 20) % 400, 200 + i)),
+          new Collider(10)
         ]
       )
     }
 
     this.world.spawn_entity(
       [
+        new Enemy(),
         new Sprite(this.sprite_manager.get_sprite('enemy')),
-        new Transform(createVector(200, 200))
+        new Transform(createVector(200, 200)),
+        new Collider(10)
       ]
     )
 
     this.frametimes = []
     this.timer = 0
+  }
+
+  /** @param {String} id */
+  despawn_entity(id) {
+    this.world.despawn_entity(id)
   }
 
   frame() {

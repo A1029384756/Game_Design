@@ -1,3 +1,4 @@
+/** @type {GameController} */
 let game_controller
 
 const player_sprite = () => {

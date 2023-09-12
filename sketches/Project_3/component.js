@@ -21,4 +21,14 @@ class Transform extends Component {
   }
 }
 
+class Collider extends Component {
+  /** @param {Number} radius */
+  constructor(radius = 0) {
+    super()
+    this.radius = radius
+  }
+}
+
 class Player extends Component {}
+
+class Enemy extends Component {}

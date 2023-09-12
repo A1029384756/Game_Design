@@ -5,7 +5,7 @@ class IdGenerator {
   }
 
   /**
-   * @returns {Number}
+   * @returns {String}
   */
   create_id() {
     this.num++
@@ -13,6 +13,6 @@ class IdGenerator {
       this.num = 0
     }
 
-    return this.num
+    return Date.now().toString() + this.num
   }
 }
