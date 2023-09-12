@@ -1,18 +1,18 @@
-/** @typedef {Map<Entity, Component[]>} QueryResult */
+/** @typedef {Map<Entity, Component[]>} QueryResponse */
 
 class Query {
   /** @param {Component[]} components */
   constructor(components) {
     /** @type {Component[]} */
     this.components = components
-    /** @type {QueryResult} */
+    /** @type {QueryResponse} */
     this.response = undefined
   }
 
   /** @param {Registry} registry */
   get_response(registry) {
     if (this.response !== undefined) {
-      return
+      return this.response
     }
 
     let selected_components = this.components.map(system_component => {
@@ -36,5 +36,6 @@ class Query {
     })
 
     this.response = result
+    return this.response
   }
 }

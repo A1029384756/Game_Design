@@ -5,7 +5,7 @@ class System {
   }
 
   /**
-   * @param {QueryResult} r
+   * @param {QueryResponse} r
   */
   work(r) {}
 }
@@ -20,7 +20,7 @@ class Render extends System {
   }
 
   /**
-   * @param {QueryResult} r
+   * @param {QueryResponse} r
    */
   work(r) {
     r.forEach((c_list, _) => {
@@ -46,7 +46,7 @@ class Gravity extends System {
   }
 
   /**
-   * @param {QueryResult} r
+   * @param {QueryResponse} r
    */
   work(r) {
     r.forEach((c_list, _) => {
@@ -69,7 +69,7 @@ class Wrapping extends System {
   }
 
   /**
-   * @param {QueryResult} r
+   * @param {QueryResponse} r
    */
   work(r) {
     r.forEach((c_list, _) => {
