@@ -31,7 +31,7 @@ class World {
     this.systems.forEach(s =>
       s.query_set.forEach(q => {
         if (q.response !== undefined && q.response.has(entity)) {
-          q.response = undefined
+          q.response.delete(entity)
         }
       }))
   }
