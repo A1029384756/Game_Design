@@ -10,7 +10,7 @@ class GameController {
     this.world.register_system(new Gravity())
     this.world.register_system(new Wrapping())
 
-    for (let i = 0; i < 2000; i++) {
+    for (let i = 0; i < 9000; i++) {
       this.world.spawn_entity(
         [
           new Player(),
@@ -26,6 +26,9 @@ class GameController {
         new Transform(createVector(200, 200))
       ]
     )
+
+    this.frametimes = []
+    this.timer = 0
   }
 
   frame() {
@@ -36,5 +39,12 @@ class GameController {
     textAlign(CENTER, CENTER)
     text(Math.round((1/deltaTime) * 1000), 100, 100)
     text(this.world.component_registry.entity_count, 100, 200)
+    this.frametimes.push(Math.round((1/deltaTime) * 1000))
+    if (this.timer > 5000) {
+      this.timer = 0
+      let rate = this.frametimes.reduce((a, b) => a + b) / this.frametimes.length
+      console.log(rate)
+    }
+    this.timer += deltaTime
   }
 }
