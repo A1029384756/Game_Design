@@ -15,8 +15,15 @@ const enemy_sprite = () => {
   return buf.get(0, 0, buf.width, buf.height)
 }
 
+/** @type {p5.Element} */
+let framerate
+/** @type {p5.Element} */
+let entity_count 
+
 function setup() {
   game_controller = new GameController()
+  framerate = createDiv()
+  entity_count = createDiv()
 }
 
 function draw() {

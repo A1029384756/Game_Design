@@ -44,7 +44,7 @@ class Gravity extends System {
     this.query_set = [
       new Query([
         new Transform(),
-        new Player()
+        new Enemy()
       ])
     ]
   }
@@ -69,7 +69,7 @@ class Wrapping extends System {
     this.query_set = [
       new Query([
         new Transform(),
-        new Player()
+        new Enemy()
       ])
     ]
   }
@@ -113,14 +113,14 @@ class Collision extends System {
     let player_query = r[0]
     let enemy_query = r[1]
 
-    player_query.forEach((player_components, id) => {
+    player_query.forEach((player_components, _) => {
       /** @type {Collider} */
       // @ts-ignore
       let player_collider = player_components.find(c => c instanceof Collider)
       /** @type {Transform} */
       // @ts-ignore
       let player_transform = player_components.find(c => c instanceof Transform)
-      enemy_query.forEach((enemy_components, _) => {
+      enemy_query.forEach((enemy_components, id) => {
         /** @type {Collider} */
         // @ts-ignore
         let enemy_collider = enemy_components.find(c => c instanceof Collider)
@@ -133,6 +133,49 @@ class Collision extends System {
           game_controller.despawn_entity(id)
         }
       })
+    })
+  }
+}
+
+class Movement extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Player(),
+        new Transform(),
+      ])
+    ]
+  }
+
+  /** 
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let player_query = r[0]
+
+    player_query.forEach((player_components, _) => {
+      /** @type {Transform} */
+      // @ts-ignore
+      let transform = player_components.find(c => c instanceof Transform)
+
+      let dir = createVector()
+
+      if (keyIsDown(UP_ARROW)) {
+        dir.y -= 1
+      }
+      if (keyIsDown(DOWN_ARROW)) {
+        dir.y += 1
+      }
+      if (keyIsDown(LEFT_ARROW)) {
+        dir.x -= 1
+      }
+      if (keyIsDown(RIGHT_ARROW)) {
+        dir.x += 1
+      }
+      dir.mult(3)
+
+      transform.v.add(dir)
     })
   }
 }
