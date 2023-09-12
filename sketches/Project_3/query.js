@@ -1,4 +1,4 @@
-/** @typedef {Map<Entity, Component[]>} QueryResult */
+/** @typedef {Component[][]} QueryResult */
 
 class Query {
   /** @param {Component[]} components */
@@ -13,22 +13,17 @@ class Query {
       return registry.registered_components.get(system_component.name)
     }).filter(c => c !== undefined)
 
-    /** @type {Entity[]} */
-    let entities = selected_components.reduce((accum, id) => [...accum, ...id.keys()], [])
+    /** @type {QueryResult} */
+    let result = new Array(MAX_ENTITIES)
 
-    let result = new Map()
-    entities.forEach(e => {
-      let components = []
-      for (let i = 0; i < selected_components.length; i++) {
-        if (selected_components[i].has(e)) {
-          components.push(selected_components[i].get(e))
-        } else {
-          return
-        }
+    for (let i = 0; i < MAX_ENTITIES; i++) {
+      if (selected_components.every(entry => entry[i] !== undefined)) {
+        result.push(selected_components.map(entry => {
+          return entry[i]
+        }))
       }
-      result.set(e, components)
-    })
+    }
 
-    return result
+    return result.filter(e => e !== undefined)
   }
 }

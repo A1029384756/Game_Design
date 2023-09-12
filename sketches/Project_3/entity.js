@@ -1,6 +1,8 @@
 /**
- * @typedef {Map<Entity, Component>} Entry
+ * @typedef {Component[]} Entry
  */
+
+const MAX_ENTITIES = 10000
 
 class Registry {
   constructor() {
@@ -15,7 +17,7 @@ class Registry {
   /** @param {Component} c */
   register_component(c) {
     if (!this.registered_components.has(c.name)) {
-      this.registered_components.set(c.name, new Map())
+      this.registered_components.set(c.name, new Array(MAX_ENTITIES).fill(undefined))
     }
   }
 
@@ -24,8 +26,7 @@ class Registry {
     let entity_id = this.id_generator.create_id()
     components.forEach(c => {
       this.registered_components
-        .get(c.name)
-        .set(entity_id, c)
+        .get(c.name)[entity_id] = c
     })
     this.entity_count++
   }
@@ -35,7 +36,7 @@ class Registry {
     this.registered_components.forEach(entry => {
       entry.forEach((_, e) => {
         if (e === entity) {
-          entry.delete(e)
+          entry[e] = undefined
         }
       })
     })
