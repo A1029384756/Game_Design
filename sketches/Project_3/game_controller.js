@@ -10,7 +10,7 @@ class GameController {
     this.world.register_system(new Gravity())
     this.world.register_system(new Wrapping())
 
-    for (let i = 0; i < 7000; i++) {
+    for (let i = 0; i < 9000; i++) {
       this.world.spawn_entity(
         [
           new Player(),
