@@ -5,10 +5,16 @@ class Query {
   constructor(components) {
     /** @type {Component[]} */
     this.components = components
+    /** @type {QueryResult} */
+    this.response = undefined
   }
 
   /** @param {Registry} registry */
   get_response(registry) {
+    if (this.response !== undefined) {
+      return this.response
+    }
+
     let selected_components = this.components.map(system_component => {
       return registry.registered_components.get(system_component.name)
     }).filter(c => c !== undefined)
@@ -24,6 +30,7 @@ class Query {
       }
     }
 
-    return result.filter(e => e !== undefined)
+    this.response = result.filter(e => e !== undefined)
+    return this.response
   }
 }

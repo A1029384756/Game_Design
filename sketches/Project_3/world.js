@@ -12,13 +12,7 @@ class World {
 
   update() {
     this.systems.forEach(s => {
-      if (s.response !== undefined) {
-        s.work(s.response)
-      } else {
-        let query = s.query.get_response(this.component_registry)
-        s.response = query
-        s.work(s.response)
-      }
+      s.work(s.query.get_response(this.component_registry))
     })
   }
 

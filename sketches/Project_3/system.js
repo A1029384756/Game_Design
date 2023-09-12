@@ -2,9 +2,6 @@ class System {
   constructor() {
     /** @type {Query} */
     this.query = new Query([])
-
-    /** @type {QueryResult} */
-    this.response = undefined
   }
 
   /**
