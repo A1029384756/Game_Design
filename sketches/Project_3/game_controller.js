@@ -26,6 +26,9 @@ class GameController {
         new Transform(createVector(200, 200))
       ]
     )
+
+    this.frametimes = []
+    this.time = 0
   }
 
   frame() {
@@ -36,5 +39,15 @@ class GameController {
     textAlign(CENTER, CENTER)
     text(Math.round((1/deltaTime) * 1000), 100, 100)
     text(this.world.component_registry.entity_count, 100, 200)
+
+    if (this.time > 5000) {
+      this.time = 0
+      let rate = this.frametimes.reduce((a, b) => a + b) / this.frametimes.length
+      console.log(rate)
+      this.frametimes = []
+    } 
+
+    this.time += deltaTime
+    this.frametimes.push(Math.round((1/deltaTime) * 1000))
   }
 }
