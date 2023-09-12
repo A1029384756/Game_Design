@@ -27,15 +27,9 @@ class Query {
 
     let result = new Map()
     entities.forEach(e => {
-      let components = []
-      for (let i = 0; i < selected_components.length; i++) {
-        if (selected_components[i].has(e)) {
-          components.push(selected_components[i].get(e))
-        } else {
-          return
-        }
+      if (selected_components.every(entry => entry.has(e))) {
+        result.set(e, selected_components.map(entry => entry.get(e)))
       }
-      result.set(e, components)
     })
 
     this.response = result
