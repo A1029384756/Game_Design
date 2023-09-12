@@ -20,3 +20,5 @@ class Transform extends Component {
     this.v = v
   }
 }
+
+class Player extends Component {}

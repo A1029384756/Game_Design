@@ -4,6 +4,7 @@ class GameController {
     this.world = new World()
     this.sprite_manager = new SpriteManager()
     this.sprite_manager.add_sprite('player', player_sprite())
+    this.sprite_manager.add_sprite('enemy', enemy_sprite())
 
     this.world.register_system(new Render())
     this.world.register_system(new Gravity())
@@ -12,11 +13,19 @@ class GameController {
     for (let i = 0; i < 1000; i++) {
       this.world.spawn_entity(
         [
+          new Player(),
           new Sprite(this.sprite_manager.get_sprite('player')),
           new Transform(createVector((i * 20) % 400, 200 + i))
         ]
       )
     }
+
+    this.world.spawn_entity(
+      [
+        new Sprite(this.sprite_manager.get_sprite('enemy')),
+        new Transform(createVector(200, 200))
+      ]
+    )
   }
 
   frame() {

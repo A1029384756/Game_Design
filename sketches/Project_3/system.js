@@ -40,7 +40,8 @@ class Gravity extends System {
   constructor() {
     super()
     this.query = new Query([
-      new Transform()
+      new Transform(),
+      new Player()
     ])
   }
 
@@ -62,7 +63,8 @@ class Wrapping extends System {
   constructor() {
     super()
     this.query = new Query([
-      new Transform()
+      new Transform(),
+      new Player()
     ])
   }
 
