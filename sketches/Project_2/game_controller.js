@@ -164,7 +164,7 @@ class GameController {
   }
 
   draw() {
-    switch(this.game_state) {
+    switch (this.game_state) {
       case GameState.Play:
         this.draw_play()
         break
