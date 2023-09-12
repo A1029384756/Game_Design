@@ -16,7 +16,7 @@ class GameController {
         [
           new Player(),
           new Sprite(this.sprite_manager.get_sprite('player')),
-          new Transform(createVector((i * 20) % 400, 200 + i)),
+          new Transform(createVector((i * 20) % 400, i % 400)),
           new Collider(10)
         ]
       )
