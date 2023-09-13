@@ -50,7 +50,7 @@ class GameController {
       let rate = this.frametimes.reduce((a, b) => a + b) / this.frametimes.length
       framerate.html(`Framerate: ${Math.round(rate)}`)
       entity_count.html(`Entity Count: ${this.world.component_registry.entity_count}`)
-      this.frametimes = []
+      this.frametimes.length = 0
 
       this.world.spawn_entity(
         [
