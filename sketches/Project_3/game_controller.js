@@ -17,7 +17,7 @@ class GameController {
         [
           new Enemy(),
           new Sprite(this.sprite_manager.get_sprite('player')),
-          new Transform(createVector(Math.floor((i * 20) % 400), Math.floor(i % 400))),
+          new Transform(createVector(Math.floor((i * 20) % 400), Math.floor(i % 400), 0)),
           new Collider(10)
         ]
       )
@@ -27,7 +27,7 @@ class GameController {
       [
         new Player(),
         new Sprite(this.sprite_manager.get_sprite('enemy')),
-        new Transform(createVector(200, 200)),
+        new Transform(createVector(200, 200, 1)),
         new Collider(10)
       ]
     )

@@ -25,16 +25,18 @@ class Render extends System {
    * @param {QueryResponse[]} r
    */
   work(r) {
-    r.forEach(q => q.forEach((c_list, _) => {
-      /** @type {Sprite} */
-      // @ts-ignore
-      let sprite = c_list.find(c => c instanceof Sprite)
-      /** @type {Transform} */
-      // @ts-ignore
-      let transform = c_list.find(c => c instanceof Transform)
+    let sprite_transforms = []
 
-      image(sprite.img, transform.v.x, transform.v.y)
+    r.forEach(q => q.forEach((c_list, _) => {
+      sprite_transforms.push({
+        sprite: c_list.find(c => c instanceof Sprite),
+        transform: c_list.find(c => c instanceof Transform)
+      })
     }))
+
+    sprite_transforms.sort((a, b) => a.transform.v.z - b.transform.v.z).forEach(st => {
+      image(st.sprite.img, st.transform.v.x, st.transform.v.y)
+    })
   }
 }
 
