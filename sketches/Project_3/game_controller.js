@@ -12,16 +12,16 @@ class GameController {
     this.world.register_system(new Collision())
     this.world.register_system(new Movement())
 
-    for (let i = 0; i < 3000; i++) {
-      this.world.spawn_entity(
-        [
-          new Enemy(),
-          new Sprite(this.sprite_manager.get_sprite('player')),
-          new Transform(createVector(Math.floor((i * 20) % 400), Math.floor(i % 400), 0)),
-          new Collider(10)
-        ]
-      )
-    }
+    // for (let i = 0; i < 3000; i++) {
+    //   this.world.spawn_entity(
+    //     [
+    //       new Enemy(),
+    //       new Sprite(this.sprite_manager.get_sprite('player')),
+    //       new Transform(createVector(Math.floor((i * 20) % 400), Math.floor(i % 400), 0)),
+    //       new Collider(10)
+    //     ]
+    //   )
+    // }
 
     this.world.spawn_entity(
       [
@@ -49,7 +49,7 @@ class GameController {
       this.timer = 0
       let rate = this.frametimes.reduce((a, b) => a + b) / this.frametimes.length
       framerate.html(`Framerate: ${Math.round(rate)}`)
-      entity_count.html(`Entity Count: ${this.world.component_registry.entity_count}`)
+      entity_count.html(`Entity Count: ${this.world.registry.entity_count}`)
       this.frametimes.length = 0
 
       this.world.spawn_entity(

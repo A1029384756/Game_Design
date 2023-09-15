@@ -6,7 +6,7 @@
 class Registry {
   constructor() {
     /** @type {Map<String, Entry>} */
-    this.registered_components = new Map()
+    this.registry = new Map()
     /** @type {Number} */
     this.entity_count = 0
     /** @type {IdGenerator} */
@@ -15,8 +15,8 @@ class Registry {
 
   /** @param {Component} c */
   register_component(c) {
-    if (!this.registered_components.has(c.name)) {
-      this.registered_components.set(c.name, new Map())
+    if (!this.registry.has(c.name)) {
+      this.registry.set(c.name, new Map())
     }
   }
 
@@ -27,7 +27,7 @@ class Registry {
   spawn_entity(components) {
     let entity_id = this.id_generator.create_id()
     components.forEach(c => {
-      this.registered_components
+      this.registry
         .get(c.name)
         .set(entity_id, c)
     })
@@ -37,9 +37,29 @@ class Registry {
 
   /** @param {Entity} entity */
   despawn_entity(entity) {
-    this.registered_components.forEach(entry => {
+    this.registry.forEach(entry => {
       entry.delete(entity)
     })
     this.entity_count--
+  }
+
+  /** 
+   * @param {Entity} entity 
+   * @param {Component[]} components
+   */
+  add_components(entity, components) {
+    components.forEach(c => {
+      this.registry.get(c.name).set(entity, c)
+    })
+  }
+
+  /** 
+   * @param {Entity} entity 
+   * @param {Component[]} components
+   */
+  remove_components(entity, components) {
+    components.forEach(c => {
+      this.registry.get(c.name).delete(entity)
+    })
   }
 }
