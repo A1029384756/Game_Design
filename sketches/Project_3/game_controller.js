@@ -60,11 +60,6 @@ class GameController {
           new Collider(10)
         ]
       )
-
-      this.world.remove_components(
-        id,
-        [ new Collider() ]
-      )
     }
     this.frametimes.push(Math.round((1/deltaTime) * 1000))
     this.timer += deltaTime
