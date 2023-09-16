@@ -18,6 +18,15 @@ const system_get_sprite = (components) => {
 
 /**
  * @param {Component[]} components 
+ * @returns {Player}
+ */
+const system_get_player = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof Player)
+}
+
+/**
+ * @param {Component[]} components 
  * @returns {Enemy}
  */
 const system_get_enemy = (components) => {

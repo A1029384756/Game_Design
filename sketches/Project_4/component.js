@@ -14,9 +14,11 @@ class Camera extends Component {}
 class Rock extends Component {}
 
 class Player extends Component {
-  constructor() {
+  /** @param {Number} remaining_goals */
+  constructor(remaining_goals = 1) {
     super()
     this.health = 3
+    this.remaining_goals = remaining_goals
   }
 }
 

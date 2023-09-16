@@ -43,6 +43,91 @@ class PlayerControl extends System {
   }
 }
 
+class PlayerLogic extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Player()
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let player_query = r[0]
+    player_query.forEach((p_c, _) => {
+      let player = system_get_player(p_c)
+      if (player.health <= 0) {
+        game_controller.end_game()
+      }
+
+      if (player.remaining_goals == 0) {
+        game_controller.end_game()
+      }
+    })
+  }
+}
+
+class PlayerCollision extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Player(),
+        new Transform(),
+        new Collider()
+      ]),
+      new Query([
+        new Enemy(),
+        new Transform(),
+        new Collider()
+      ]),
+      new Query([
+        new Rock(),
+        new Transform(),
+        new Collider()
+      ])
+    ]
+  }
+
+  /** 
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let player_query = r[0]
+    let enemy_query = r[1]
+    let rock_query = r[2]
+
+    player_query.forEach((p_c, _) => {
+      let player = system_get_player(p_c)
+      let collider = system_get_collider(p_c)
+      let transform = system_get_transform(p_c)
+
+      enemy_query.forEach((e_c, _) => {
+        let enemy_collider = system_get_collider(e_c)
+        let enemy_transform = system_get_transform(e_c)
+        
+        if (collides(collider, transform.pos, enemy_collider, enemy_transform.pos)) {
+          game_controller.end_game()
+        }
+      })
+
+      rock_query.forEach((r_c, r_id) => {
+        let rock_collider = system_get_collider(r_c)
+        let rock_transform = system_get_transform(r_c)
+
+        if (collides(collider, transform.pos, rock_collider, rock_transform.pos)) {
+          game_controller.despawn_entity(r_id)
+          player.health--
+        }
+      })
+    })
+  }
+}
+
 class Shoot extends System {
   constructor() {
     super()

@@ -15,9 +15,14 @@ class World {
   /** @param {System} system */
   register_system(system) {
     this.systems.push(system)
-    system.query_set.forEach(q => q.components.forEach(c => {
-      this.registry.register_component(c)
-    }))
+    system.query_set.forEach(q => {
+      q.components.forEach(c => {
+        this.registry.register_component(c)
+      })
+      q.disallowed_components.forEach(c => {
+        this.registry.register_component(c)
+      })
+    })
   }
 
   /** 
@@ -30,9 +35,9 @@ class World {
       s.query_set.forEach(q => {
         if (q.components.every(c =>
           components.find(comp => comp.name === c.name) !== undefined
-        ) && (q.disallowed_components.every(c => 
-            components.find(d_c => d_c.name === c.name) === undefined
-          ))) {
+        ) && (q.disallowed_components.every(c =>
+          components.find(d_c => d_c.name === c.name) === undefined
+        ))) {
           q.response.set(id, components)
         }
       })
@@ -70,9 +75,9 @@ class World {
       s.query_set.forEach(q => {
         if (q.components.every(c =>
           new_components.find(comp => comp.name === c.name) !== undefined
-        ) && (q.disallowed_components.every(c => 
-            components.find(d_c => d_c.name === c.name) === undefined
-          ))) {
+        ) && (q.disallowed_components.every(c =>
+          components.find(d_c => d_c.name === c.name) === undefined
+        ))) {
           q.response.set(entity, new_components)
         }
       })
@@ -105,8 +110,8 @@ class World {
         if (q.components.every(c =>
           new_components.find(comp => comp.name === c.name) !== undefined
         ) && (q.disallowed_components.every(c =>
-            components.find(d_c => d_c.name === c.name) === undefined
-          ))) {
+          components.find(d_c => d_c.name === c.name) === undefined
+        ))) {
           q.response.set(entity, new_components)
         }
       })
