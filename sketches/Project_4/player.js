@@ -15,10 +15,8 @@ class PlayerControl extends System {
   work(r) {
     let player_query = r[0]
 
-    player_query.forEach((player_components, _) => {
-      /** @type {Transform} */
-      // @ts-ignore
-      let transform = player_components.find(c => c instanceof Transform)
+    player_query.forEach((p_c, _) => {
+      let transform = system_get_transform(p_c)
 
       let vel = 0
 
@@ -62,13 +60,9 @@ class Shoot extends System {
   work(r) {
     let shooter_query = r[0]
 
-    shooter_query.forEach((shooter_components, _) => {
-      /** @type {Transform} */
-      // @ts-ignore
-      let transform = shooter_components.find(c => c instanceof Transform)
-      /** @type {Gun} */
-      // @ts-ignore
-      let gun = shooter_components.find(c => c instanceof Gun)
+    shooter_query.forEach((s_c, _) => {
+      let transform = system_get_transform(s_c)
+      let gun = system_get_gun(s_c)
 
       gun.shot_delay.update()
       if (keyIsDown(32) && gun.shot_delay.complete) {
@@ -83,7 +77,8 @@ class Shoot extends System {
           new Sprite(
             game_controller.sprite_manager.get_sprite('bullet')
           ),
-          new Bullet()
+          new Bullet(),
+          new Collider(5)
         ])
       }
     })

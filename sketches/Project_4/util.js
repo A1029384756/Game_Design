@@ -19,6 +19,7 @@ class IdGenerator {
 
 /**
  * @param {Vector} [v=createVector()] 
+ * @returns {Vector}
  */
 function copy_vector(v = createVector()) {
   return createVector(v.x, v.y, v.z)
@@ -52,4 +53,19 @@ class Timer {
     this.time_remaining = this.time_ms
     this.complete = false
   }
+}
+
+/**
+  * @param {Collider} c1
+  * @param {Vector} p1
+  * @param {Collider} c2
+  * @param {Vector} p2
+  * @returns {Boolean}
+  */
+const collides = (c1, p1, c2, p2) => {
+  const p1_copy = copy_vector(p1)
+  const p2_copy = copy_vector(p2)
+  const d = p1_copy.sub(p2_copy)
+  const rad = c1.radius + c2.radius
+  return ((d.x * d.x) + (d.y * d.y)) <= (rad * rad)
 }

@@ -42,19 +42,18 @@ class Render extends System {
 
     non_camera_query.forEach((c_list, _) => {
       this.sprite_transforms.push({
-        sprite: c_list.find(c => c instanceof Sprite),
-        transform: c_list.find(c => c instanceof Transform)
+        sprite: system_get_sprite(c_list),
+        transform: system_get_transform(c_list)
       })
     })
 
     camera_query.forEach((c_list, _) => {
       this.sprite_transforms.push({
-        sprite: c_list.find(c => c instanceof Sprite),
-        transform: c_list.find(c => c instanceof Transform)
+        sprite: system_get_sprite(c_list),
+        transform: system_get_transform(c_list)
       })
 
-      // @ts-ignore
-      camera_pos = c_list.find(c => c instanceof Transform).pos
+      camera_pos = system_get_transform(c_list).pos
     })
 
     translate(-camera_pos.x + game_controller.canvas.width / 2, -camera_pos.y + game_controller.canvas.height / 2)

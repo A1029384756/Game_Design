@@ -5,6 +5,29 @@ class Component {
   }
 }
 
+class Invincible extends Component {}
+
+class Bullet extends Component {}
+
+class Camera extends Component {}
+
+class Rock extends Component {}
+
+class Player extends Component {
+  constructor() {
+    super()
+    this.health = 3
+  }
+}
+
+class Enemy extends Component {
+  constructor() {
+    super()
+    this.state = EnemyState.Wander
+    this.health = 2
+  }
+}
+
 class Sprite extends Component {
   /** @param {Image} img */
   constructor(img = createImage(0, 0)) {
@@ -19,7 +42,7 @@ class Transform extends Component {
    * @param {Number} dir
    * @param {Number} speed 
    */
-  constructor(pos = createVector(), dir = 0, speed = 0) {
+  constructor(pos = createVector(), dir = 0, speed = 1) {
     super()
     this.pos = pos
     this.dir = dir
@@ -34,14 +57,6 @@ class Collider extends Component {
     this.radius = radius
   }
 }
-
-class Player extends Component {}
-
-class Enemy extends Component {}
-
-class Bullet extends Component {}
-
-class Camera extends Component {}
 
 class Gun extends Component {
   /**
