@@ -1,136 +1,3 @@
-class Enemy extends GameObject {
-  /**
-   * @param {Image} sprite
-   * @param {Vector} pos
-  */
-  constructor(sprite, pos) {
-    super(pos)
-    /* @type {Image} */
-    this.sprite = sprite
-    /* @type {EnemyState} */
-    this.state = EnemyState.Wander
-    /* @type {Speed} */
-    this.speed = 1
-    /* @type {Collider} */
-    this.collider = new Collider(this.pos, this.sprite.width)
-    /* @type {Timer} */
-    this.notify_timer = new Timer(
-      250,
-      this.notify_entities.bind(this)
-    )
-    /* @type {Number} */
-    this.health = 2
-    /* @type {Number} */
-    this.direction = 0
-    /* @type {Vector} */
-    this.vel = createVector()
-    /* @type {Timer} */
-    this.pos_timer = new Timer(
-      3000,
-      this.update_target.bind(this)
-    )
-    this.update_target()
-  }
-
-  update() {
-    this.collider.pos = this.pos
-    this.notify_timer.update()
-
-    let pos = copy_vector(this.pos)
-    let target = copy_vector(this.target_pos)
-    let dir = target.sub(pos)
-    let movement_mag = this.speed * deltaTime / 100
-
-    switch (this.state) {
-      case EnemyState.Wander:
-        let pos = copy_vector(this.pos)
-        if (pos.sub(this.target_pos).magSq() < 3) {
-          this.update_target()
-        } else {
-          this.pos_timer.update()
-        }
-        this.direction = -dir.angleBetween(createVector(0, -1))
-        break
-      case EnemyState.Chase:
-        this.direction = -dir.angleBetween(createVector(0, -1))
-        break
-      case EnemyState.Avoid:
-        if (this.obstacle_delta.x > 0 && this.obstacle_delta.x < 50) {
-          this.direction += 0.01
-        } else if (this.obstacle_delta.y > 0 && this.obstacle_delta.y < 50) {
-          this.direction -= 0.01
-        }
-        break
-    }
-
-    this.vel = createVector(movement_mag * cos(this.direction), movement_mag * sin(this.direction))
-
-    this.pos.add(this.vel)
-  }
-
-  draw() {
-    let pos = copy_vector(this.pos)
-    translate(pos)
-    rotate(this.direction)
-    image(this.sprite, -this.sprite.width / 2, -this.sprite.height / 2)
-    rotate(-this.direction)
-    translate(pos.mult(createVector(-1, -1)))
-  }
-
-  /** @param {GameObject} rhs */
-  handle_interaction(rhs) {
-    if (rhs instanceof Player) {
-      if (this.state !== EnemyState.Avoid) {
-        if (this.pos.dist(rhs.pos) <= 150) {
-          this.state = EnemyState.Chase
-          this.target_pos = rhs.pos
-        } else {
-          this.state = EnemyState.Wander
-        }
-      }
-    } else if (rhs instanceof Bullet) {
-      if (this.collider.collides(rhs.collider)) {
-        game_controller.add_message(
-          new Message(
-            MessageType.Delete,
-            rhs
-          )
-        )
-        game_controller.add_message(
-          new Message(
-            MessageType.Delete,
-            this
-          )
-        )
-      }
-    } else if (rhs instanceof Rock) {
-      let pos = copy_vector(this.pos)
-      let delta = pos.sub(rhs.pos)
-      if (delta.magSq() < 500) {
-        this.state = EnemyState.Avoid
-        this.obstacle_delta = delta
-      } else {
-        this.state = EnemyState.Wander
-      }
-    }
-  }
-
-  notify_entities() {
-    game_controller.add_message(
-      new Message(
-        MessageType.Interact,
-        this
-      )
-    )
-    this.notify_timer.reset()
-  }
-
-  update_target() {
-    this.target_pos = createVector(random(0, 1000), random(0, 1000))
-    this.pos_timer.reset()
-  }
-}
-
 class EnemyState {
   static Wander = new EnemyState('wander')
   static Chase = new EnemyState('chase')
@@ -142,692 +9,134 @@ class EnemyState {
   }
 }
 
-const enemy_sprite = () => {
-  let buf = createGraphics(20, 20)
-  buf.noStroke()
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(7, 0, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(8, 0, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(9, 0, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(10, 0, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(11, 0, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(12, 0, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(5, 1, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(6, 1, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 1, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 1, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 1, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 1, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 1, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 1, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(13, 1, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(14, 1, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(3, 2, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(4, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 2, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 2, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(15, 2, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(16, 2, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(2, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 3, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 3, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(17, 3, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(2, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 4, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 4, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(17, 4, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(1, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 5, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 5, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(18, 5, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(1, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 6, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 6, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(18, 6, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 7, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(5, 7, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(6, 7, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(7, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 7, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(12, 7, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(13, 7, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(14, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 7, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 7, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 7, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 8, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 8, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 8, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 8, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(4, 8, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(5, 8, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(6, 8, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(7, 8, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(8, 8, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 8, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 8, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(11, 8, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(12, 8, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(13, 8, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(14, 8, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(15, 8, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 8, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 8, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 8, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 8, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 9, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 9, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 9, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 9, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(4, 9, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(5, 9, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(6, 9, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(7, 9, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(8, 9, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 9, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 9, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(11, 9, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(12, 9, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(13, 9, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(14, 9, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(15, 9, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 9, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 9, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 9, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 9, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 10, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 10, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 10, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(4, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(5, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(6, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(7, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(8, 10, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 10, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(11, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(12, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(13, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(14, 10, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(15, 10, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 10, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 10, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 10, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 10, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 11, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(5, 11, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(6, 11, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(7, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 11, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(12, 11, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(13, 11, 1, 1)
-  buf.fill('rgba(255,255,255,255)')
-  buf.rect(14, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 11, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 11, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 11, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 12, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 12, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 12, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 13, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 13, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 13, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 14, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 14, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 14, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 15, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 15, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 15, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(3, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(7, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(12, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(16, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 16, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 16, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 16, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(2, 17, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(3, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(4, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(6, 17, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(7, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(8, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(11, 17, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(12, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(13, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(15, 17, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(16, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(17, 17, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 17, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 17, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 18, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(1, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(2, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(4, 18, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(5, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(6, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(8, 18, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(9, 18, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(10, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(11, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(13, 18, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(14, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(15, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(17, 18, 1, 1)
-  buf.fill('rgba(255,0,0,255)')
-  buf.rect(18, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 18, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(0, 19, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(1, 19, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(5, 19, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(9, 19, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(10, 19, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(14, 19, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(18, 19, 1, 1)
-  buf.fill('rgba(0,0,0,255)')
-  buf.rect(19, 19, 1, 1)
-  return buf.get(0, 0, buf.width, buf.height)
+class EnemyBehavior extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Enemy(),
+        new Transform()
+      ]),
+      new Query([
+        new Player(),
+        new Transform()
+      ]),
+      new Query([
+        new Rock(),
+        new Transform(),
+      ])
+    ]
+
+    this.closest_rock_dist_pos = [0, createVector()]
+    this.player_dist_pos = [0, createVector()]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+
+  work(r) {
+    let enemy_query = r[0]
+    let player_query = r[1]
+    let rock_query = r[2]
+
+    enemy_query.forEach((e_c, e_id) => {
+      let enemy = system_get_enemy(e_c)
+      let enemy_transform = system_get_transform(e_c)
+
+      if (enemy.health <= 0) {
+        game_controller.despawn_entity(e_id)
+        return
+      }
+
+      this.closest_rock_dist_pos = get_closest_rock(enemy_transform.pos, rock_query)
+      this.player_dist_pos = get_player(enemy_transform.pos, player_query)
+
+      if (this.closest_rock_dist_pos[0] < 50) {
+        enemy.state = EnemyState.Avoid
+      } else if (this.player_dist_pos[0] < 150) {
+        enemy.state = EnemyState.Chase
+      } else {
+        enemy.state = EnemyState.Wander
+      }
+
+      let delta = copy_vector(enemy_transform.pos)
+      switch (enemy.state) {
+        case EnemyState.Wander:
+          break
+        case EnemyState.Chase:
+          delta.sub(this.player_dist_pos[1])
+          enemy_transform.dir = delta.heading() - HALF_PI
+          break
+        case EnemyState.Avoid:
+          delta.sub(this.closest_rock_dist_pos[1])
+
+          let angle = enemy_transform.dir - HALF_PI - delta.heading()
+          let x = round(delta.mag() * sin(angle))
+          let y = round(delta.mag() * cos(angle))
+
+          if (x <= 0 && y <= 0) {
+            enemy_transform.dir += 0.1
+          } else if (x > 0 && y <= 0) {
+            enemy_transform.dir -= 0.1
+          } else if (x > 0 && y > 0) {
+            enemy_transform.dir += 0.01
+          } else {
+            enemy_transform.dir -= 0.01
+          }
+          break
+      }
+
+      enemy_transform.pos.x += sin(enemy_transform.dir)
+      enemy_transform.pos.y -= cos(enemy_transform.dir)
+    })
+  }
+}
+
+/**
+ * @param {Vector} enemy_pos
+ * @param {QueryResponse} rock_query
+ * @returns {[Number, Vector]}
+ */
+const get_closest_rock = (enemy_pos, rock_query) => {
+  /** @type {Number} */
+  let closest_rock_dist = Infinity
+  /** @type {Vector} */
+  let closest_rock_pos = createVector()
+
+  rock_query.forEach((r_c, _) => {
+    let rock_pos = copy_vector(system_get_transform(r_c).pos)
+    let delta = copy_vector(enemy_pos)
+    delta.sub(rock_pos)
+
+    if (delta.mag() < closest_rock_dist) {
+      closest_rock_dist = delta.mag()
+      closest_rock_pos = rock_pos
+    }
+  })
+
+  return [closest_rock_dist, closest_rock_pos]
+}
+
+/**
+ * @param {Vector} enemy_pos
+ * @param {QueryResponse} player_query
+ * @returns {[Number, Vector]}
+ */
+const get_player = (enemy_pos, player_query) => {
+  /** @type {Number} */
+  let player_dist = 0
+  /** @type {Vector} */
+  let player_pos = createVector()
+
+  player_query.forEach((p_c, _) => {
+    let pos = system_get_transform(p_c).pos
+    let delta = copy_vector(enemy_pos)
+    delta.sub(pos)
+
+    player_dist = delta.mag()
+    player_pos = pos
+  })
+
+  return [player_dist, player_pos]
 }
