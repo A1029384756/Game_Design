@@ -14,10 +14,16 @@ class Sprite extends Component {
 }
 
 class Transform extends Component {
-  /** @param {Vector} v */
-  constructor(v = createVector()) {
+  /** 
+   * @param {Vector} pos 
+   * @param {Number} dir
+   * @param {Number} speed 
+   */
+  constructor(pos = createVector(), dir = 0, speed = 0) {
     super()
-    this.v = v
+    this.pos = pos
+    this.dir = dir
+    this.speed = speed
   }
 }
 
@@ -32,3 +38,17 @@ class Collider extends Component {
 class Player extends Component {}
 
 class Enemy extends Component {}
+
+class Bullet extends Component {}
+
+class Camera extends Component {}
+
+class Gun extends Component {
+  /**
+  *  @param {Timer} shot_delay
+  */
+  constructor(shot_delay = new Timer(0)) {
+    super()
+    this.shot_delay = shot_delay
+  }
+}
