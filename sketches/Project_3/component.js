@@ -5,13 +5,41 @@ class Component {
   }
 }
 
-class Invincible extends Component {}
+class Border extends Component {}
 
 class Bullet extends Component {}
 
-class Camera extends Component {}
+class Coin extends Component {}
 
 class Rock extends Component {}
+
+class Camera extends Component {}
+
+class Button extends Component {
+  /** 
+   * @param {String} text 
+   * @param {Number} width 
+   * @param {Number} height
+   * @param {String} color
+   * @param {Function} action
+   */
+  constructor(text = '', width = 0, height = 0, color = 'red', action = () => {}) {
+    super()
+    this.text = text
+    this.width = width
+    this.height = height
+    this.color = color
+    this.action = action
+  }
+}
+
+class GameText extends Component {
+  /** @param {String} text */
+  constructor(text = '') {
+    super()
+    this.text = text
+  }
+}
 
 class Player extends Component {
   /** @param {Number} remaining_goals */

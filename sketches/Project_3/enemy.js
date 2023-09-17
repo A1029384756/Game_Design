@@ -15,6 +15,7 @@ class EnemyBehavior extends System {
     this.query_set = [
       new Query([
         new Enemy(),
+        new Sprite(),
         new Transform()
       ]),
       new Query([
@@ -43,16 +44,19 @@ class EnemyBehavior extends System {
     enemy_query.forEach((e_c, e_id) => {
       let enemy = system_get_enemy(e_c)
       let enemy_transform = system_get_transform(e_c)
+      let enemy_sprite = system_get_sprite(e_c)
 
       if (enemy.health <= 0) {
         game_controller.despawn_entity(e_id)
         return
+      } else {
+        enemy_sprite.img = game_controller.sprite_manager.get_sprite(`enemy_${enemy.health}`)
       }
 
       this.closest_rock_dist_pos = get_closest_rock(enemy_transform.pos, rock_query)
       this.player_dist_pos = get_player(enemy_transform.pos, player_query)
 
-      if (this.closest_rock_dist_pos[0] < 50) {
+      if (this.closest_rock_dist_pos[0] < 30) {
         enemy.state = EnemyState.Avoid
       } else if (this.player_dist_pos[0] < 150) {
         enemy.state = EnemyState.Chase

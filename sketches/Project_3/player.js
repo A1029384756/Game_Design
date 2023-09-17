@@ -32,13 +32,26 @@ class PlayerControl extends System {
       if (keyIsDown(68)) {
         transform.dir += 0.075
       }
-      vel *= 3
+      vel *= 2
       transform.pos.add(
         createVector(
           vel * cos(transform.dir),
           vel * sin(transform.dir)
         )
       )
+
+      if (transform.pos.x < 20) {
+        transform.pos.x = 22
+      }
+      if (transform.pos.x > 960) {
+        transform.pos.x = 958
+      }
+      if (transform.pos.y < 20) {
+        transform.pos.y = 22
+      }
+      if (transform.pos.y > 960) {
+        transform.pos.y = 958
+      }
     })
   }
 }
@@ -48,7 +61,8 @@ class PlayerLogic extends System {
     super()
     this.query_set = [
       new Query([
-        new Player()
+        new Player(),
+        new Sprite()
       ])
     ]
   }
@@ -60,12 +74,16 @@ class PlayerLogic extends System {
     let player_query = r[0]
     player_query.forEach((p_c, _) => {
       let player = system_get_player(p_c)
+      let sprite = system_get_sprite(p_c)
+
       if (player.health <= 0) {
-        game_controller.end_game()
+        game_controller.lose_game()
+      } else {
+        sprite.img = game_controller.sprite_manager.get_sprite(`player_${player.health}`)
       }
 
       if (player.remaining_goals == 0) {
-        game_controller.end_game()
+        game_controller.win_game()
       }
     })
   }
@@ -89,6 +107,13 @@ class PlayerCollision extends System {
         new Rock(),
         new Transform(),
         new Collider()
+      ], [
+        new Border()
+      ]),
+      new Query([
+        new Coin(),
+        new Transform(),
+        new Collider()
       ])
     ]
   }
@@ -100,6 +125,7 @@ class PlayerCollision extends System {
     let player_query = r[0]
     let enemy_query = r[1]
     let rock_query = r[2]
+    let coin_query = r[3]
 
     player_query.forEach((p_c, _) => {
       let player = system_get_player(p_c)
@@ -109,9 +135,9 @@ class PlayerCollision extends System {
       enemy_query.forEach((e_c, _) => {
         let enemy_collider = system_get_collider(e_c)
         let enemy_transform = system_get_transform(e_c)
-        
+
         if (collides(collider, transform.pos, enemy_collider, enemy_transform.pos)) {
-          game_controller.end_game()
+          game_controller.lose_game()
         }
       })
 
@@ -122,6 +148,16 @@ class PlayerCollision extends System {
         if (collides(collider, transform.pos, rock_collider, rock_transform.pos)) {
           game_controller.despawn_entity(r_id)
           player.health--
+        }
+      })
+
+      coin_query.forEach((c_c, c_id) => {
+        let coin_collider = system_get_collider(c_c)
+        let coin_transform = system_get_transform(c_c)
+
+        if (collides(collider, transform.pos, coin_collider, coin_transform.pos)) {
+          game_controller.despawn_entity(c_id)
+          player.remaining_goals--
         }
       })
     })

@@ -43,7 +43,6 @@ const system_get_gun = (components) => {
   return components.find(c => c instanceof Gun)
 }
 
-
 /**
  * @param {Component[]} components 
  * @returns {Collider}
@@ -51,4 +50,22 @@ const system_get_gun = (components) => {
 const system_get_collider = (components) => {
   // @ts-ignore
   return components.find(c => c instanceof Collider)
+}
+
+/**
+ * @param {Component[]} components 
+ * @returns {Button}
+ */
+const system_get_button = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof Button)
+}
+
+/**
+ * @param {Component[]} components 
+ * @returns {GameText}
+ */
+const system_get_text = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof GameText)
 }

@@ -18,7 +18,12 @@ class BulletDynamics extends System {
         new Transform(),
         new Collider()
       ], [
-        new Invincible()
+        new Border()
+      ]),
+      new Query([
+        new Border(),
+        new Transform(),
+        new Collider()
       ])
     ]
   }
@@ -30,6 +35,7 @@ class BulletDynamics extends System {
     let bullet_query = r[0]
     let enemy_query = r[1]
     let rock_query = r[2]
+    let border_query = r[3]
 
     bullet_query.forEach((b_c, b_id) => {
       let collider = system_get_collider(b_c)
@@ -54,6 +60,15 @@ class BulletDynamics extends System {
 
         if (collides(collider, transform.pos, rock_collider, rock_pos.pos)) {
           game_controller.despawn_entity(r_id)
+          game_controller.despawn_entity(b_id)
+        }
+      })
+
+      border_query.forEach((br_q, _) => {
+        let rock_collider = system_get_collider(br_q)
+        let rock_pos = system_get_transform(br_q)
+
+        if (collides(collider, transform.pos, rock_collider, rock_pos.pos)) {
           game_controller.despawn_entity(b_id)
         }
       })
