@@ -38,7 +38,8 @@ const coin = (x, y, sprite_manager) => {
     new Coin(),
     new Sprite(sprite_manager.get_sprite('coin')),
     new Transform(createVector(x, y, 0)),
-    new Collider(10)
+    new Collider(10),
+    new Obstacle()
   ]
 }
 
@@ -52,7 +53,8 @@ const rock = (x, y, sprite_manager) => {
     new Rock(),
     new Sprite(sprite_manager.get_sprite('rock')),
     new Transform(createVector(x, y, 2)),
-    new Collider(10)
+    new Collider(10),
+    new Obstacle()
   ]
 }
 
@@ -64,9 +66,9 @@ const rock = (x, y, sprite_manager) => {
 const border = (x, y, sprite_manager) => {
   return [
     new Border(),
-    new Rock(),
     new Sprite(sprite_manager.get_sprite('border')),
     new Transform(createVector(x, y, 2)),
     new Collider(10),
+    new Obstacle()
   ]
 }

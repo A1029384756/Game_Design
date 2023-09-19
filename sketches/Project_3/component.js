@@ -11,6 +11,8 @@ class Bullet extends Component {}
 
 class Coin extends Component {}
 
+class Obstacle extends Component {}
+
 class Rock extends Component {}
 
 class Camera extends Component {}

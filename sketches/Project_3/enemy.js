@@ -23,7 +23,7 @@ class EnemyBehavior extends System {
         new Transform()
       ]),
       new Query([
-        new Rock(),
+        new Obstacle(),
         new Transform(),
       ])
     ]
@@ -39,7 +39,7 @@ class EnemyBehavior extends System {
   work(r) {
     let enemy_query = r[0]
     let player_query = r[1]
-    let rock_query = r[2]
+    let obstacle_query = r[2]
 
     enemy_query.forEach((e_c, e_id) => {
       let enemy = system_get_enemy(e_c)
@@ -53,7 +53,7 @@ class EnemyBehavior extends System {
         enemy_sprite.img = game_controller.sprite_manager.get_sprite(`enemy_${enemy.health}`)
       }
 
-      this.closest_rock_dist_pos = get_closest_rock(enemy_transform.pos, rock_query)
+      this.closest_rock_dist_pos = get_closest_obstacle(enemy_transform.pos, obstacle_query)
       this.player_dist_pos = get_player(enemy_transform.pos, player_query)
 
       if (this.closest_rock_dist_pos[0] < 30) {
@@ -102,24 +102,24 @@ class EnemyBehavior extends System {
  * @param {QueryResponse} rock_query
  * @returns {[Number, Vector]}
  */
-const get_closest_rock = (enemy_pos, rock_query) => {
+const get_closest_obstacle = (enemy_pos, rock_query) => {
   /** @type {Number} */
-  let closest_rock_dist = Infinity
+  let closest_obstacle_dist = Infinity
   /** @type {Vector} */
-  let closest_rock_pos = createVector()
+  let closest_obstacle_pos = createVector()
 
   rock_query.forEach((r_c, _) => {
-    let rock_pos = copy_vector(system_get_transform(r_c).pos)
+    let obstacle_pos = copy_vector(system_get_transform(r_c).pos)
     let delta = copy_vector(enemy_pos)
-    delta.sub(rock_pos)
+    delta.sub(obstacle_pos)
 
-    if (delta.mag() < closest_rock_dist) {
-      closest_rock_dist = delta.mag()
-      closest_rock_pos = rock_pos
+    if (delta.mag() < closest_obstacle_dist) {
+      closest_obstacle_dist = delta.mag()
+      closest_obstacle_pos = obstacle_pos
     }
   })
 
-  return [closest_rock_dist, closest_rock_pos]
+  return [closest_obstacle_dist, closest_obstacle_pos]
 }
 
 /**
