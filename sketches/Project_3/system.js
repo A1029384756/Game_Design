@@ -65,6 +65,15 @@ class RenderSprites extends System {
       /** @type {Image} */
       let img = st.sprite.img
 
+      if (
+        pos.x < camera_pos.x - game_controller.canvas.width / 2 - img.width ||
+        pos.x > camera_pos.x + game_controller.canvas.width / 2 + img.width ||
+        pos.y < camera_pos.y - game_controller.canvas.height / 2 - img.height ||
+        pos.y > camera_pos.y + game_controller.canvas.height / 2 + img.height
+      ) {
+        return
+      }
+
       translate(pos)
       rotate(transform.dir)
       image(img, -img.width / 2, -img.height / 2)
