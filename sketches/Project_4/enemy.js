@@ -34,3 +34,33 @@ class EnemyBehavior extends System {
     })
   }
 }
+
+class EnemyAnimation extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Enemy(),
+        new Sprite(),
+        new Transform(),
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let enemy_query = r[0]
+    enemy_query.forEach((e_c, e_id) => {
+      let sprite = system_get_sprite(e_c)
+      let transform = system_get_transform(e_c)
+
+      if (transform.vel.y > 0) {
+        sprite.curr_frame = 0
+      } else {
+        sprite.curr_frame = 1
+      }
+    })
+  }
+}

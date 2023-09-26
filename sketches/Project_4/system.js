@@ -40,21 +40,26 @@ class RenderSprites extends System {
       let transform = st.transform
       /** @type {Vector} */
       let pos = copy_vector(transform.pos)
-      /** @type {Image} */
-      let img = st.sprite.img
+      /** @type {Sprite} */
+      let sprite = st.sprite
 
       if (
-        pos.x < -game_controller.canvas.width - img.width ||
-        pos.x > game_controller.canvas.width + img.width ||
-        pos.y < -game_controller.canvas.height - img.height ||
-        pos.y > game_controller.canvas.height + img.height
+        pos.x < -game_controller.canvas.width - sprite.img.width ||
+        pos.x > game_controller.canvas.width + sprite.img.width ||
+        pos.y < -game_controller.canvas.height - sprite.img.height ||
+        pos.y > game_controller.canvas.height + sprite.img.height
       ) {
         return
       }
 
       translate(pos)
       rotate(transform.vel.heading())
-      image(img, -img.width / 2, -img.height / 2)
+      image(sprite.img.get(
+        0,
+        (sprite.img.height / sprite.frame_count) * sprite.curr_frame,
+        sprite.img.width,
+        sprite.img.height / sprite.frame_count
+      ), -sprite.img.width / 2, -sprite.img.height / (2 * sprite.frame_count))
       rotate(-transform.vel.heading())
       translate(pos.mult(createVector(-1, -1)))
     })

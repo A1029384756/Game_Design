@@ -53,10 +53,15 @@ class Enemy extends Component {
 }
 
 class Sprite extends Component {
-  /** @param {Image} img */
-  constructor(img = createImage(0, 0)) {
+  /** 
+   * @param {Image} img 
+   * @param {Number} [frame_count=1] 
+   */
+  constructor(img = createImage(0, 0), frame_count = 1) {
     super()
     this.img = img
+    this.frame_count = frame_count
+    this.curr_frame = 0
   }
 }
 

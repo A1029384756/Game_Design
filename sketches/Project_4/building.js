@@ -38,11 +38,30 @@ const create_building_and_enemy = (x) => {
   const BUILDING_WIDTH = 60
   const BUILDING_MIN_HEIGHT = 50
   const BUILDING_MAX_HEIGHT = 250
+  const BUILDING_COLORS = [
+    '#BC6D50',
+    '#8E3215',
+    '#9E440B',
+    '#B74315',
+    '#854C3B',
+    '#6B3F37',
+    '#91361A',
+  ]
 
   /** @type {Graphics} */
   let buf = createGraphics(BUILDING_WIDTH, random(BUILDING_MIN_HEIGHT, BUILDING_MAX_HEIGHT))
-  buf.fill(color(random(255), random(255), random(255)))
+  buf.fill(BUILDING_COLORS[floor(random(BUILDING_COLORS.length))])
   buf.rect(0, 0, buf.width, buf.height)
+  buf.fill('#DBB177')
+  buf.rect(0, 0, buf.width, 5)
+
+  for (let x = 15; x < 45; x += 15) {
+    for (let y = 15; y < buf.height; y += 30) {
+      if (random() > 0.5) {
+        buf.image(window_sprite(), x, y)
+      }
+    }
+  }
 
   return [
     [
@@ -53,7 +72,7 @@ const create_building_and_enemy = (x) => {
     ],
     [
       new Enemy(340 - buf.height),
-      new Sprite(player_sprite()),
+      new Sprite(enemy_sprite(), 2),
       new Transform(createVector(x, 0)),
       new Collider(20, 20)
     ]

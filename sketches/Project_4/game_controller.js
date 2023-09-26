@@ -20,7 +20,7 @@ class GameController {
   }
 
   frame() {
-    background('cyan')
+    background('#70C5CD')
     this.world.update()
   }
 
@@ -29,16 +29,18 @@ class GameController {
 
     this.world.register_system(new PlayerControl())
     this.world.register_system(new PlayerCollision())
+    this.world.register_system(new PlayerAnimation())
     this.world.register_system(new BuildingLifecycle())
     this.world.register_system(new ScoreBoard())
     this.world.register_system(new EnemyBehavior())
+    this.world.register_system(new EnemyAnimation())
     this.world.register_system(new RenderSprites())
     this.world.register_system(new RenderUI())
 
     this.spawn_entity([
       new Player(),
       new Transform(createVector(50, 200, 1)),
-      new Sprite(player_sprite()),
+      new Sprite(player_sprite(), 2),
       new Collider(30, 30)
     ])
 

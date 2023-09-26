@@ -72,3 +72,33 @@ class PlayerCollision extends System {
     })
   }
 }
+
+class PlayerAnimation extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Player(),
+        new Sprite()
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let player_query = r[0]
+
+    player_query.forEach((p_c, _) => {
+      let sprite = system_get_sprite(p_c)
+
+      if (frameCount % 5 == 0) {
+        sprite.curr_frame++
+        if (sprite.curr_frame == sprite.frame_count) {
+          sprite.curr_frame = 0
+        }
+      }
+    })
+  }
+}

@@ -1,4 +1,4 @@
-/** @typedef {Map<String, Image[]>} SpriteTable */
+/** @typedef {Map<String, [Image, Vector]>} SpriteTable */
 
 class SpriteManager {
   constructor() {
@@ -8,18 +8,18 @@ class SpriteManager {
 
   /** 
    * @param {String} name
-   * @param {Image[]} imgs
+   * @param {Image} img
+   * @param {Vector} size
    */
-  add_sprite(name, imgs) {
-    this.sprite_table.set(name, imgs)
+  add_sprite(name, img, size) {
+    this.sprite_table.set(name, [img, size])
   }
 
   /**
    * @param {String} name 
-   * @param {Number} [frame=0] 
    * @returns {Image}
    */
-  get_sprite(name, frame = 0) {
-    return this.sprite_table.get(name)[frame]
+  get_sprite(name) {
+    return this.sprite_table.get(name)[0]
   }
 }
