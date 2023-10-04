@@ -51,10 +51,19 @@ class PlayerCollision extends System {
         new Collider()
       ]),
       new Query([
+        new Building(),
         new Transform(),
         new Collider()
-      ], [
-        new Player()
+      ]),
+      new Query([
+        new Ball(),
+        new Transform(),
+        new Collider()
+      ]),
+      new Query([
+        new Bird(),
+        new Transform(),
+        new Collider()
       ])
     ]
   }
@@ -64,7 +73,8 @@ class PlayerCollision extends System {
   */
   work(r) {
     let player_query = r[0]
-    let collision_query = r[1]
+    let collision_query = new Map([...r[1], ...r[2]])
+    let bird_query = r[3]
 
     player_query.forEach((p_c, _) => {
       let transform = system_get_transform(p_c).pos
@@ -76,6 +86,15 @@ class PlayerCollision extends System {
 
         if (collides(collider, transform, c_collider, c_transform)) {
           game_controller.lose_game()
+        }
+      })
+
+      bird_query.forEach((b_c, _) => {
+        let bird_transform = system_get_transform(b_c).pos
+        let bird_collider = system_get_collider(b_c)
+
+        if (collides(collider, transform, bird_collider, bird_transform)) {
+          game_controller.win_game()
         }
       })
     })

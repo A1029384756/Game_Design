@@ -76,6 +76,36 @@ class GameController {
     }
   }
 
+  win_game() {
+    this.world = new World()
+
+    this.world.register_system(new RenderUI())
+
+    this.spawn_entity([
+      new GameText(
+        `You Win!\nYour score: ${this.score}`
+      ),
+      new Transform(
+        createVector(200, 100)
+      )
+    ])
+
+    this.spawn_entity([
+      new Button(
+        'Restart',
+        500,
+        500,
+        'green',
+        this.setup_game.bind(this)
+      ),
+      new Transform(
+        createVector(200, 200)
+      )
+    ])
+
+    this.score = 0
+  }
+
   lose_game() {
     this.world = new World()
 
