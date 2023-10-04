@@ -48,12 +48,12 @@ class BirdAnimation extends System {
     let enemy_query = r[0]
     enemy_query.forEach((e_c, _) => {
       let sprite = system_get_sprite(e_c)
-      let transform = system_get_transform(e_c)
 
-      if (transform.vel.y > 0) {
-        sprite.curr_frame = 0
-      } else {
-        sprite.curr_frame = 1
+      if (frameCount % 5 == 0) {
+        sprite.curr_frame++
+        if (sprite.curr_frame == sprite.frame_count) {
+          sprite.curr_frame = 0
+        }
       }
     })
   }
