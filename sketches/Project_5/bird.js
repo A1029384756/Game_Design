@@ -340,6 +340,11 @@ class BirdBuildingBehavior extends System {
         new Player(),
         new Transform(),
         new Collider()
+      ]),
+      new Query([
+        new Ball(),
+        new Transform(),
+        new Collider()
       ])
     ]
   }
@@ -351,6 +356,7 @@ class BirdBuildingBehavior extends System {
     let bird_query = r[0]
     let building_query = r[1]
     let player_query = r[2]
+    let ball_query = r[3]
 
     bird_query.forEach((b_c, id) => {
       let bird = system_get_bird(b_c)
@@ -385,6 +391,15 @@ class BirdBuildingBehavior extends System {
           game_controller.world.remove_components(id, [new BirdBuilding()])
           return
         }
+      }
+
+      // Find if any balls are threats
+      const obstacle_balls = balls_to_avoid(transform, sensor, ball_query)
+      if (obstacle_balls.length > 0) {
+        // Transition to ball state
+        game_controller.world.add_components(id, [new BirdBall()])
+        game_controller.world.remove_components(id, [new BirdBuilding()])
+        return
       }
     })
   }
