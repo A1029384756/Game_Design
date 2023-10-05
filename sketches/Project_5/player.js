@@ -1,3 +1,5 @@
+class Player extends Component {}
+
 class PlayerControl extends System {
   constructor() {
     super()
@@ -26,13 +28,11 @@ class PlayerControl extends System {
       }
 
       if (keyIsDown(LEFT_ARROW)) {
-        player_transform.pos.x -= 3
+        player_transform.pos.x -= 2
       }
       if (keyIsDown(RIGHT_ARROW)) {
-        player_transform.pos.x += 3
+        player_transform.pos.x += 2
       }
-
-      player_transform.pos.add(player_transform.vel)
 
       if (player_transform.pos.x <= 10 || player_transform.pos.x >= 390) {
         game_controller.lose_game()

@@ -1,3 +1,5 @@
+class Building extends Component {}
+
 class BuildingLifecycle extends System {
   constructor() {
     super()
@@ -18,14 +20,14 @@ class BuildingLifecycle extends System {
     building_query.forEach((b_c, b_id) => {
       let transform = system_get_transform(b_c)
 
-      transform.pos.x -= BUILDING_ENEMY_VEL
+      transform.pos.add(transform.vel)
       if (transform.pos.x < -60) {
         game_controller.despawn_entity(b_id)
         const entities = create_building_and_cannon(460)
         entities.forEach((e) => {
           game_controller.spawn_entity(e)
         })
-        game_controller.score++;
+        game_controller.score += 1
       }
     })
   }
@@ -46,7 +48,7 @@ const create_building_and_cannon = (x) => {
     '#B74315',
     '#854C3B',
     '#6B3F37',
-    '#91361A',
+    '#91361A'
   ]
 
   /** @type {Graphics} */
@@ -70,14 +72,14 @@ const create_building_and_cannon = (x) => {
   return [
     [
       new Building(),
-      new Transform(createVector(x, 400 - buf.height / 2, 0)),
+      new Transform(createVector(x, 400 - buf.height / 2, 0), createVector(BUILDING_X_VEL, 0)),
       new Sprite(buf.get()),
       new Collider(buf.width, buf.height)
     ],
     [
-      new Cannon(createVector(cannon_y_vel / tan(PI - cannon_angle) - BUILDING_ENEMY_VEL, -cannon_y_vel)),
+      new Cannon(createVector(cannon_y_vel / tan(PI - cannon_angle) + BUILDING_X_VEL, -cannon_y_vel)),
       new Sprite(cannon_sprite()),
-      new Transform(createVector(x + 130, 400, 5), createVector(), cannon_angle + HALF_PI)
+      new Transform(createVector(x + 130, 400, 5), createVector(BUILDING_X_VEL, 0), cannon_angle + HALF_PI)
     ]
   ]
 }

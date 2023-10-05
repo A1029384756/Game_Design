@@ -49,7 +49,9 @@ class Registry {
    */
   add_components(entity, components) {
     components.forEach(c => {
-      this.registry.get(c.name).set(entity, c)
+      if (this.registry.get(c.name) !== undefined) {
+        this.registry.get(c.name).set(entity, c)
+      }
     })
   }
 

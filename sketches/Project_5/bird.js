@@ -1,0 +1,452 @@
+class Bird extends Component {
+  constructor() {
+    super()
+    this.jump_vel = -3
+    this.speed = 4
+    this.target_x = 100
+  }
+}
+
+class BirdCollision extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Bird(),
+        new Transform(),
+        new Collider()
+      ]),
+      new Query([
+        new Transform(),
+        new Collider()
+      ], [
+        new Bird()
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let bird_query = r[0]
+    let collision_query = r[1]
+
+    bird_query.forEach((b_c, _) => {
+      let transform = system_get_transform(b_c)
+      let collider = system_get_collider(b_c)
+
+      collision_query.forEach((c_c, _) => {
+        let c_transform = system_get_transform(c_c)
+        let c_collider = system_get_collider(c_c)
+
+        if (collides(collider, transform.pos, c_collider, c_transform.pos)) {
+          game_controller.win_game()
+        }
+      })
+
+      if (transform.pos.y < 15) {
+        game_controller.win_game()
+      }
+    })
+  }
+}
+
+class BirdDefault extends Component { }
+class BirdBorder extends Component { }
+class BirdBuilding extends Component { }
+class BirdMonster extends Component { }
+class BirdBall extends Component { }
+
+class BirdDefaultBehavior extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Bird(),
+        new Transform(),
+        new Sensor(),
+        new BirdDefault()
+      ]),
+      new Query([
+        new Player(),
+        new Transform(),
+        new Collider()
+      ]),
+      new Query([
+        new Building(),
+        new Transform(),
+        new Collider()
+      ]),
+      new Query([
+        new Ball(),
+        new Transform(),
+        new Collider()
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let bird_query = r[0]
+    let player_query = r[1]
+    let building_query = r[2]
+    let ball_query = r[3]
+
+    bird_query.forEach((b_c, id) => {
+      let transform = system_get_transform(b_c)
+      let sensor = system_get_sensor(b_c)
+
+      let bird = system_get_bird(b_c)
+
+      if (transform.pos.x < bird.target_x) {
+        transform.pos.x += (transform.pos.x < bird.target_x ? 1 : -1) * bird.speed
+      }
+
+      if (
+        transform.pos.x < 30 ||
+        transform.pos.x > 190 ||
+        transform.pos.y < 30 ||
+        transform.pos.y > 370
+      ) {
+        game_controller.world.add_components(id, [new BirdBorder()])
+        game_controller.world.remove_components(id, [new BirdDefault()])
+        return
+      }
+
+      for (const [_, p_c] of player_query) {
+        let player_transform = system_get_transform(p_c)
+        let player_collider = system_get_collider(p_c)
+
+        if (predict_collision(sensor, transform, player_collider, player_transform, 3)) {
+          game_controller.world.add_components(id, [new BirdMonster()])
+          game_controller.world.remove_components(id, [new BirdDefault()])
+          return
+        }
+      }
+
+      if (balls_to_avoid(transform, sensor, ball_query).length > 0) {
+        game_controller.world.add_components(id, [new BirdBall()])
+        game_controller.world.remove_components(id, [new BirdDefault()])
+        return
+      }
+
+      const [closest_building_transform, closest_building_collider] = nearest_building(transform, building_query)
+      if (transform.pos.y > closest_building_transform.pos.y - closest_building_collider.h / 2 - 30) {
+        game_controller.world.add_components(id, [new BirdBuilding()])
+        game_controller.world.remove_components(id, [new BirdDefault()])
+        return
+      }
+    })
+  }
+}
+
+class BirdMonsterBehavior extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Bird(),
+        new Transform(),
+        new Sensor(),
+        new BirdMonster()
+      ]),
+      new Query([
+        new Player(),
+        new Transform(),
+        new Collider()
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let bird_query = r[0]
+    let player_query = r[1]
+
+    bird_query.forEach((b_c, id) => {
+      let bird = system_get_bird(b_c)
+      let transform = system_get_transform(b_c)
+      let sensor = system_get_sensor(b_c)
+
+      player_query.forEach((p_c, _) => {
+        let p_transform = system_get_transform(p_c)
+        let p_collider = system_get_collider(p_c)
+
+        if (predict_collision(sensor, transform, p_collider, p_transform, 3)) {
+          if (transform.vel.y > 0 && p_transform.pos.y > transform.pos.y) {
+            transform.vel.y = bird.jump_vel
+          }
+          transform.pos.x += (transform.pos.x > p_transform.pos.x ? 1 : -1) * bird.speed
+        } else {
+          game_controller.world.add_components(id, [new BirdDefault()])
+          game_controller.world.remove_components(id, [new BirdMonster()])
+        }
+      })
+    })
+  }
+}
+
+class BirdBallBehavior extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Bird(),
+        new Transform(),
+        new Sensor(),
+        new BirdBall()
+      ]),
+      new Query([
+        new Ball(),
+        new Transform(),
+        new Collider()
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let bird_query = r[0]
+    let ball_query = r[1]
+
+    bird_query.forEach((b_c, id) => {
+      let bird = system_get_bird(b_c)
+      let transform = system_get_transform(b_c)
+      let sensor = system_get_sensor(b_c)
+
+      const obstacle_balls = balls_to_avoid(transform, sensor, ball_query)
+
+      if (obstacle_balls.length > 0) {
+        transform.pos.x += (transform.pos.x > obstacle_balls[0].x ? 1 : -1) * bird.speed
+        if (transform.vel.y > 0) {
+          transform.vel.y = bird.jump_vel
+        }
+      } else {
+        game_controller.world.add_components(id, [new BirdDefault()])
+        game_controller.world.remove_components(id, [new BirdBall()])
+      }
+    })
+  }
+}
+
+class BirdBuildingBehavior extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Bird(),
+        new Transform(),
+        new Sensor(),
+        new BirdBuilding()
+      ]),
+      new Query([
+        new Building(),
+        new Transform(),
+        new Collider()
+      ]),
+      new Query([
+        new Player(),
+        new Transform(),
+        new Collider()
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let bird_query = r[0]
+    let building_query = r[1]
+    let player_query = r[2]
+
+    bird_query.forEach((b_c, id) => {
+      let bird = system_get_bird(b_c)
+      let transform = system_get_transform(b_c)
+      let sensor = system_get_sensor(b_c)
+
+      const [closest_building_transform, closest_building_collider] = nearest_building(transform, building_query)
+
+      if (transform.pos.y > closest_building_transform.pos.y - closest_building_collider.h / 2 - 30) {
+        if (transform.vel.y > 0) {
+          transform.vel.y = bird.jump_vel
+        } else if (transform.pos.x > closest_building_transform.pos.x - closest_building_collider.w) {
+          transform.pos.x -= bird.speed
+        }
+      } else {
+        game_controller.world.add_components(id, [new BirdDefault()])
+        game_controller.world.remove_components(id, [new BirdBuilding()])
+        return
+      }
+
+      for (const [_, p_c] of player_query) {
+        let player_transform = system_get_transform(p_c)
+        let player_collider = system_get_collider(p_c)
+
+        if (predict_collision(sensor, transform, player_collider, player_transform, 3)) {
+          game_controller.world.add_components(id, [new BirdMonster()])
+          game_controller.world.remove_components(id, [new BirdBuilding()])
+          return
+        }
+      }
+    })
+  }
+}
+
+class BirdBorderBehavior extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Bird(),
+        new Transform(),
+        new BirdBorder()
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let bird_query = r[0]
+
+    bird_query.forEach((b_c, id) => {
+      let bird = system_get_bird(b_c)
+      let transform = system_get_transform(b_c)
+
+      if (transform.pos.x < 40) {
+        transform.pos.x += bird.speed
+      } else if (transform.pos.x > 180) {
+        transform.pos.x -= bird.speed
+      }
+
+      if (transform.pos.y > 350 && transform.vel.y > 0) {
+        transform.vel.y = bird.jump_vel
+      }
+
+      if (
+        transform.pos.x > 40 &&
+        transform.pos.x < 180 &&
+        transform.pos.y < 360 &&
+        transform.pos.y > 40
+      ) {
+        game_controller.world.add_components(id, [new BirdDefault()])
+        game_controller.world.remove_components(id, [new BirdBorder()])
+      }
+    })
+  }
+}
+
+class BirdAnimation extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Bird(),
+        new Sprite(),
+        new Transform(),
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let bird_query = r[0]
+    bird_query.forEach((b_c, _) => {
+      let sprite = system_get_sprite(b_c)
+      let transform = system_get_transform(b_c)
+      let vel_copy = copy_vector(transform.vel)
+      transform.dir = vel_copy.add(createVector(2, 0)).heading()
+
+      if (frameCount % 5 == 0) {
+        sprite.curr_frame++
+        if (sprite.curr_frame == sprite.frame_count) {
+          sprite.curr_frame = 0
+        }
+      }
+    })
+  }
+}
+
+/**
+ * @param {Transform} bird_transform
+ * @param {QueryResponse} building_query
+ * @returns {[Transform, Collider]}
+ */
+const nearest_building = (bird_transform, building_query) => {
+  let closest_building_transform = new Transform(createVector(Infinity))
+  let closest_building_collider = new Collider()
+
+  building_query.forEach((bu_c, _) => {
+    let building_transform = system_get_transform(bu_c)
+    let building_collider = system_get_collider(bu_c)
+
+    if (building_transform.pos.x + building_collider.w / 2 + 30 <= bird_transform.pos.x) {
+      return
+    }
+
+    if (building_transform.pos.x < closest_building_transform.pos.x) {
+      closest_building_transform = building_transform
+      closest_building_collider = building_collider
+    }
+  })
+
+  return [closest_building_transform, closest_building_collider]
+}
+
+/**
+ * @param {Transform} bird_transform
+ * @param {Collider} bird_collider
+ * @param {QueryResponse} ball_query
+ * @returns {Vector[]}
+ */
+const balls_to_avoid = (bird_transform, bird_collider, ball_query) => {
+  let result = []
+  ball_query.forEach((b_c, _) => {
+    let ball_transform = system_get_transform(b_c)
+    let ball_collider = system_get_collider(b_c)
+    if (predict_collision(bird_collider, bird_transform, ball_collider, ball_transform, 5)) {
+      result.push(predict_position(ball_transform, 5))
+    }
+  })
+
+  return result
+}
+
+/**
+ * @param {Collider} c1
+ * @param {Transform} t1
+ * @param {Collider} c2
+ * @param {Transform} t2
+ * @param {Number} n
+ * @returns {Boolean}
+ */
+const predict_collision = (c1, t1, c2, t2, n) => {
+  let p_t1 = predict_position(t1, n)
+  let p_t2 = predict_position(t2, n)
+
+  return collides(c1, p_t1, c2, p_t2)
+}
+
+/**
+ * @param {Transform} t
+ * @param {Number} n
+ * @returns {Vector}
+ */
+const predict_position = (t, n) => {
+  let pos_copy = copy_vector(t.pos)
+  let vel_copy = copy_vector(t.vel)
+
+  pos_copy.add(vel_copy.mult(n))
+  return pos_copy
+}

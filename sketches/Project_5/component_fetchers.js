@@ -29,7 +29,7 @@ const system_get_player = (components) => {
  * @param {Component[]} components 
  * @returns {Bird}
  */
-const system_get_enemy = (components) => {
+const system_get_bird = (components) => {
   // @ts-ignore
   return components.find(c => c instanceof Bird)
 }
@@ -41,6 +41,15 @@ const system_get_enemy = (components) => {
 const system_get_collider = (components) => {
   // @ts-ignore
   return components.find(c => c instanceof Collider)
+}
+
+/**
+ * @param {Component[]} components 
+ * @returns {Sensor}
+ */
+const system_get_sensor = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof Sensor)
 }
 
 /**

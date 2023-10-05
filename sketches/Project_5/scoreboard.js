@@ -1,3 +1,5 @@
+class Score extends Component {}
+
 class ScoreBoard extends System {
   constructor() {
     super()

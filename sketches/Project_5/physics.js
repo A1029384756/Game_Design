@@ -1,5 +1,5 @@
 const GRAVITY = -0.1
-const BUILDING_ENEMY_VEL = 2
+const BUILDING_X_VEL = -2
 
 class Gravity extends Component {
   /**
@@ -35,6 +35,7 @@ class ApplyGravity extends System {
       let grav_dir = copy_vector(gravity.dir)
 
       transform.vel.add(grav_dir.mult(gravity.mag))
+      transform.pos.add(transform.vel)
     })
   }
 }

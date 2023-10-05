@@ -37,23 +37,42 @@ class GameController {
     this.world.register_system(new PlayerControl())
     this.world.register_system(new PlayerCollision())
     this.world.register_system(new PlayerAnimation())
-    this.world.register_system(new ApplyGravity())
+
     this.world.register_system(new BuildingLifecycle())
+
+    this.world.register_system(new CannonBehavior())
     this.world.register_system(new BallAnimation())
     this.world.register_system(new BallCollision())
-    this.world.register_system(new CannonMovement())
-    this.world.register_system(new ScoreBoard())
-    this.world.register_system(new BirdBehavior())
+
+    this.world.register_system(new BirdBuildingBehavior())
+    this.world.register_system(new BirdDefaultBehavior())
+    this.world.register_system(new BirdMonsterBehavior())
+    this.world.register_system(new BirdBorderBehavior())
+    this.world.register_system(new BirdBallBehavior())
+    this.world.register_system(new BirdCollision())
     this.world.register_system(new BirdAnimation())
+    
+    this.world.register_system(new ScoreBoard())
+    this.world.register_system(new ApplyGravity())
     this.world.register_system(new RenderSprites())
     this.world.register_system(new RenderUI())
 
     this.spawn_entity([
       new Player(),
-      new Transform(createVector(200, 10, 1)),
+      new Sprite(player_sprite(), 2),
+      new Transform(createVector(200, 10, 2)),
       new Gravity(createVector(0, 1)),
-      new Sprite(enemy_sprite(), 2),
       new Collider(20, 20)
+    ])
+
+    this.spawn_entity([
+      new Bird(),
+      new Sprite(bird_sprite(), 2),
+      new Transform(createVector(75, 200, 1)),
+      new Gravity(createVector(0, -1)),
+      new BirdDefault(),
+      new Collider(30, 30),
+      new Sensor(60, 60)
     ])
 
     this.spawn_entity([

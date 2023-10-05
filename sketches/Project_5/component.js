@@ -5,23 +5,6 @@ class Component {
   }
 }
 
-class Building extends Component {}
-
-class Ball extends Component {}
-
-class Cannon extends Component {
-  /** 
-   * @param {Vector} initial_vel 
-   */
-  constructor(initial_vel = createVector()) {
-    super()
-    this.fired = false
-    this.initial_vel = initial_vel
-  }
-}
-
-class Score extends Component {}
-
 class Button extends Component {
   /** 
    * @param {String} text 
@@ -45,16 +28,6 @@ class GameText extends Component {
   constructor(text = '') {
     super()
     this.text = text
-  }
-}
-
-class Player extends Component {}
-
-class Bird extends Component {
-  /** @param {Number} jump_height */
-  constructor(jump_height = 0) {
-    super()
-    this.jump_height = jump_height
   }
 }
 
@@ -96,3 +69,5 @@ class Collider extends Component {
     this.h = h
   }
 }
+
+class Sensor extends Collider {}

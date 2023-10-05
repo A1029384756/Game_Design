@@ -1,3 +1,5 @@
+class Ball extends Component {}
+
 class BallAnimation extends System {
   constructor() {
     super()
@@ -19,7 +21,6 @@ class BallAnimation extends System {
       let transform = system_get_transform(b_c)
       transform.dir += abs(transform.vel.y)
         * (transform.vel.x > 0 ? 0.1 : -0.1)
-      transform.pos.add(transform.vel)
     })
   }
 }
@@ -77,7 +78,18 @@ class BallCollision extends System {
   }
 }
 
-class CannonMovement extends System {
+class Cannon extends Component {
+  /** 
+   * @param {Vector} initial_vel 
+   */
+  constructor(initial_vel = createVector()) {
+    super()
+    this.fired = false
+    this.initial_vel = initial_vel
+  }
+}
+
+class CannonBehavior extends System {
   constructor() {
     super()
     this.query_set = [
@@ -98,7 +110,7 @@ class CannonMovement extends System {
       let cannon = system_get_cannon(c_c)
       let transform = system_get_transform(c_c)
 
-      transform.pos.x -= BUILDING_ENEMY_VEL
+      transform.pos.add(transform.vel)
 
       if (transform.pos.x <= 380 && !cannon.fired) {
         cannon.fired = true

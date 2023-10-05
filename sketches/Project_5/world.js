@@ -70,7 +70,6 @@ class World {
         updated_components.push(e.get(entity))
       }
     })
-    console.log(updated_components)
 
     this.systems.forEach(s => {
       s.query_set.forEach(q => {
