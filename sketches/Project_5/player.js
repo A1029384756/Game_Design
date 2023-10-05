@@ -19,6 +19,8 @@ class PlayerControl extends System {
     player_query.forEach((e_c, _) => {
       let player_transform = system_get_transform(e_c)
 
+      // Allow player to jump and stop
+      // at top of screen
       if (player_transform.pos.y <= 10) {
         player_transform.pos.y = 10
         player_transform.vel.y = 0
@@ -27,15 +29,12 @@ class PlayerControl extends System {
         }
       }
 
+      // Move left and right
       if (keyIsDown(LEFT_ARROW)) {
         player_transform.pos.x -= 2
       }
       if (keyIsDown(RIGHT_ARROW)) {
         player_transform.pos.x += 2
-      }
-
-      if (player_transform.pos.x <= 10 || player_transform.pos.x >= 390) {
-        game_controller.lose_game()
       }
     })
   }
@@ -80,10 +79,16 @@ class PlayerCollision extends System {
       let transform = system_get_transform(p_c).pos
       let collider = system_get_collider(p_c)
 
+      // Lose game on border collision
+      if (transform.x <= 10 || transform.x >= 390) {
+        game_controller.lose_game()
+      }
+
       collision_query.forEach((c_c, _) => {
         let c_transform = system_get_transform(c_c).pos
         let c_collider = system_get_collider(c_c)
 
+        // Lose game on collision with obstacles
         if (collides(collider, transform, c_collider, c_transform)) {
           game_controller.lose_game()
         }
@@ -93,6 +98,7 @@ class PlayerCollision extends System {
         let bird_transform = system_get_transform(b_c).pos
         let bird_collider = system_get_collider(b_c)
 
+        // Win game on bird collision
         if (collides(collider, transform, bird_collider, bird_transform)) {
           game_controller.win_game()
         }
@@ -123,6 +129,7 @@ class PlayerAnimation extends System {
       let transform = system_get_transform(p_c)
       let sprite = system_get_sprite(p_c)
 
+      // Update sprite based on y velocity
       if (transform.vel.y > 0) {
         sprite.curr_frame = 1
       } else {

@@ -4,6 +4,32 @@ class GameController {
   constructor() {
     this.canvas = createCanvas(400, 400)
     this.sprite_manager = new SpriteManager()
+    this.sprite_manager.add_sprite(
+      'player',
+      new Sprite(
+        player_sprite(),
+        2
+      )
+    )
+    this.sprite_manager.add_sprite(
+      'bird',
+      new Sprite(
+        bird_sprite(),
+        2
+      )
+    )
+    this.sprite_manager.add_sprite(
+      'ball',
+      new Sprite(
+        ball_sprite()
+      )
+    )
+    this.sprite_manager.add_sprite(
+      'cannon',
+      new Sprite(
+        cannon_sprite()
+      )
+    )
     this.setup_game()
 
     this.score = 0
@@ -52,7 +78,7 @@ class GameController {
     this.world.register_system(new BirdCollision())
     this.world.register_system(new BirdAnimation())
     this.world.register_system(new BirdLabeling())
-    
+
     this.world.register_system(new ScoreBoard())
     this.world.register_system(new ApplyGravity())
     this.world.register_system(new RenderSprites())
@@ -60,7 +86,7 @@ class GameController {
 
     this.spawn_entity([
       new Player(),
-      new Sprite(player_sprite(), 2),
+      this.sprite_manager.get_sprite('player'),
       new Transform(createVector(200, 10, 2)),
       new Gravity(createVector(0, 1)),
       new Collider(20, 20)
@@ -68,7 +94,7 @@ class GameController {
 
     this.spawn_entity([
       new Bird(),
-      new Sprite(bird_sprite(), 2),
+      this.sprite_manager.get_sprite('bird'),
       new Transform(createVector(75, 200, 1)),
       new Gravity(createVector(0, -1)),
       new BirdDefault(),

@@ -19,6 +19,8 @@ class BallAnimation extends System {
 
     ball_query.forEach((b_c, _) => {
       let transform = system_get_transform(b_c)
+      // Rotate ball clockwise/counterclockwise
+      // depending on x velocity
       transform.dir += abs(transform.vel.y)
         * (transform.vel.x > 0 ? 0.1 : -0.1)
     })
@@ -59,18 +61,23 @@ class BallCollision extends System {
 
         if (collides(collider, transform.pos, building_collider, building_transform.pos)) {
           if (transform.pos.y < building_transform.pos.y - building_collider.h / 2) {
+            // Bounce up and down if on top of building
             transform.pos.y = building_transform.pos.y - building_collider.h / 2 - collider.h / 2
             transform.vel.y *= -1
           } else if (transform.pos.x < building_transform.pos.x - building_collider.w / 2) {
+            // Bunce left if to left of building
             transform.pos.x = building_transform.pos.x - building_collider.w / 2 - collider.w / 2
             transform.vel.x *= -1
           } else if (transform.pos.x > building_transform.pos.x + building_collider.w / 2) {
+            // Bunce right if to right of building
+            transform.pos.x = building_transform.pos.x - building_collider.w / 2 - collider.w / 2
             transform.pos.x = building_transform.pos.x + building_collider.w / 2 + collider.w / 2
             transform.vel.x *= -1
           }
         }
       })
 
+      // Get rid of ball if outside canvas
       if (transform.pos.x < -50 || transform.pos.x > 450 || transform.pos.y > 400) {
         game_controller.despawn_entity(b_id)
       }
@@ -112,12 +119,13 @@ class CannonBehavior extends System {
 
       transform.pos.add(transform.vel)
 
+      // Shoot cannon once
       if (transform.pos.x <= 380 && !cannon.fired) {
         cannon.fired = true
         game_controller.spawn_entity(
           [
             new Ball(),
-            new Sprite(ball_sprite()),
+            game_controller.sprite_manager.get_sprite('ball'),
             new Transform(createVector(transform.pos.x, transform.pos.y), cannon.initial_vel),
             new Gravity(),
             new Collider(20, 20)
@@ -125,6 +133,7 @@ class CannonBehavior extends System {
         )
       }
       
+      // Delete cannon when outside of canvas
       if (transform.pos.x < -20) {
         game_controller.despawn_entity(c_id)
       }

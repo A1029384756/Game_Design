@@ -20,6 +20,8 @@ class BuildingLifecycle extends System {
     building_query.forEach((b_c, b_id) => {
       let transform = system_get_transform(b_c)
 
+      // Move buildings and spawn new ones
+      // when old ones pass left screen edge
       transform.pos.add(transform.vel)
       if (transform.pos.x < -60) {
         game_controller.despawn_entity(b_id)

@@ -34,6 +34,8 @@ class ApplyGravity extends System {
       let transform = system_get_transform(c)
       let grav_dir = copy_vector(gravity.dir)
 
+      // Update position and velocity
+      // using basic newtonian physics
       transform.vel.add(grav_dir.mult(gravity.mag))
       transform.pos.add(transform.vel)
     })

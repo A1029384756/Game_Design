@@ -7,6 +7,13 @@ class Bird extends Component {
   }
 }
 
+// Components representing bird states
+class BirdDefault extends Component { }
+class BirdBorder extends Component { }
+class BirdBuilding extends Component { }
+class BirdMonster extends Component { }
+class BirdBall extends Component { }
+
 class BirdLabeling extends System {
   constructor() {
     super()
@@ -105,23 +112,19 @@ class BirdCollision extends System {
         let c_transform = system_get_transform(c_c)
         let c_collider = system_get_collider(c_c)
 
+        // End game if bird collides with objects
         if (collides(collider, transform.pos, c_collider, c_transform.pos)) {
           game_controller.win_game()
         }
       })
 
-      if (transform.pos.y < 15) {
+      // End game if outside of bounds
+      if (transform.pos.y < 15 || transform.pos.x < 15 || transform.pos.x > 200) {
         game_controller.win_game()
       }
     })
   }
 }
-
-class BirdDefault extends Component { }
-class BirdBorder extends Component { }
-class BirdBuilding extends Component { }
-class BirdMonster extends Component { }
-class BirdBall extends Component { }
 
 class BirdDefaultBehavior extends System {
   constructor() {
@@ -166,12 +169,19 @@ class BirdDefaultBehavior extends System {
 
       let bird = system_get_bird(b_c)
 
+      // Move target x position every 30 frames
+      if (frameCount % 30 == 0) {
+        bird.target_x = random(50, 150)
+      }
+
+      // Move to target x position if not there
       if (transform.pos.x < bird.target_x) {
         transform.pos.x += (transform.pos.x < bird.target_x ? 1 : -1) * bird.speed
       }
 
+      // Transition to bird border avoidance
       if (
-        transform.pos.x < 30 ||
+        transform.pos.x < 40 ||
         transform.pos.x > 190 ||
         transform.pos.y < 30 ||
         transform.pos.y > 370
@@ -181,6 +191,7 @@ class BirdDefaultBehavior extends System {
         return
       }
 
+      // Transition to monster avoidance
       for (const [_, p_c] of player_query) {
         let player_transform = system_get_transform(p_c)
         let player_collider = system_get_collider(p_c)
@@ -192,12 +203,14 @@ class BirdDefaultBehavior extends System {
         }
       }
 
+      // Transition to ball avoidance
       if (balls_to_avoid(transform, sensor, ball_query).length > 0) {
         game_controller.world.add_components(id, [new BirdBall()])
         game_controller.world.remove_components(id, [new BirdDefault()])
         return
       }
 
+      // Transition to building avoidance
       const [closest_building_transform, closest_building_collider] = nearest_building(transform, building_query)
       if (transform.pos.y > closest_building_transform.pos.y - closest_building_collider.h / 2 - 30) {
         game_controller.world.add_components(id, [new BirdBuilding()])
@@ -242,12 +255,16 @@ class BirdMonsterBehavior extends System {
         let p_transform = system_get_transform(p_c)
         let p_collider = system_get_collider(p_c)
 
+        // Decide whether monster is still a threat
         if (predict_collision(sensor, transform, p_collider, p_transform, 3)) {
+          // Jump only if above monster
           if (transform.vel.y > 0 && p_transform.pos.y > transform.pos.y) {
             transform.vel.y = bird.jump_vel
           }
+          // Move away from monster
           transform.pos.x += (transform.pos.x > p_transform.pos.x ? 1 : -1) * bird.speed
         } else {
+          // Reset to default state
           game_controller.world.add_components(id, [new BirdDefault()])
           game_controller.world.remove_components(id, [new BirdMonster()])
         }
@@ -288,12 +305,15 @@ class BirdBallBehavior extends System {
 
       const obstacle_balls = balls_to_avoid(transform, sensor, ball_query)
 
+      // Decide whether balls are still a threat
       if (obstacle_balls.length > 0) {
+        // Move and jump away from ball
         transform.pos.x += (transform.pos.x > obstacle_balls[0].x ? 1 : -1) * bird.speed
         if (transform.vel.y > 0) {
           transform.vel.y = bird.jump_vel
         }
       } else {
+        // Reset to default state
         game_controller.world.add_components(id, [new BirdDefault()])
         game_controller.world.remove_components(id, [new BirdBall()])
       }
@@ -339,22 +359,27 @@ class BirdBuildingBehavior extends System {
 
       const [closest_building_transform, closest_building_collider] = nearest_building(transform, building_query)
 
+      // Decide whether building is still a threat
       if (transform.pos.y > closest_building_transform.pos.y - closest_building_collider.h / 2 - 30) {
+        // Jump over or avoid building
         if (transform.vel.y > 0) {
           transform.vel.y = bird.jump_vel
         } else if (transform.pos.x > closest_building_transform.pos.x - closest_building_collider.w) {
           transform.pos.x -= bird.speed
         }
       } else {
+        // Reset to default state
         game_controller.world.add_components(id, [new BirdDefault()])
         game_controller.world.remove_components(id, [new BirdBuilding()])
         return
       }
 
+      // Find if any players are threats
       for (const [_, p_c] of player_query) {
         let player_transform = system_get_transform(p_c)
         let player_collider = system_get_collider(p_c)
 
+        // Transition to monster state
         if (predict_collision(sensor, transform, player_collider, player_transform, 3)) {
           game_controller.world.add_components(id, [new BirdMonster()])
           game_controller.world.remove_components(id, [new BirdBuilding()])
@@ -387,18 +412,21 @@ class BirdBorderBehavior extends System {
       let bird = system_get_bird(b_c)
       let transform = system_get_transform(b_c)
 
-      if (transform.pos.x < 40) {
+      // Move away from x edges
+      if (transform.pos.x < 50) {
         transform.pos.x += bird.speed
       } else if (transform.pos.x > 180) {
         transform.pos.x -= bird.speed
       }
 
+      // Jump above y edges
       if (transform.pos.y > 350 && transform.vel.y > 0) {
         transform.vel.y = bird.jump_vel
       }
 
+      // Reset to default state
       if (
-        transform.pos.x > 40 &&
+        transform.pos.x > 50 &&
         transform.pos.x < 180 &&
         transform.pos.y < 360 &&
         transform.pos.y > 40
@@ -433,6 +461,7 @@ class BirdAnimation extends System {
       let vel_copy = copy_vector(transform.vel)
       transform.dir = vel_copy.add(createVector(2, 0)).heading()
 
+      // Cycle bird frame every 5 frames
       if (frameCount % 5 == 0) {
         sprite.curr_frame++
         if (sprite.curr_frame == sprite.frame_count) {
