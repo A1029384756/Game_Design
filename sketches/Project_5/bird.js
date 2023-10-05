@@ -171,11 +171,11 @@ class BirdDefaultBehavior extends System {
 
       // Move target x position every 30 frames
       if (frameCount % 30 == 0) {
-        bird.target_x = random(50, 150)
+        bird.target_x = random(50, 160)
       }
 
       // Move to target x position if not there
-      if (transform.pos.x < bird.target_x) {
+      if (transform.pos.x < bird.target_x - 10 || transform.pos.x > bird.target_x + 10) {
         transform.pos.x += (transform.pos.x < bird.target_x ? 1 : -1) * bird.speed
       }
 
