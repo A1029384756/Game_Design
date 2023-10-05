@@ -69,7 +69,7 @@ const create_building_and_cannon = (x) => {
   }
 
   const cannon_angle = random(-2.3562, -1.7453)
-  const cannon_y_vel = sqrt(-2 * GRAVITY * (buf.height + 50))
+  const cannon_y_vel = sqrt(-2 * GRAVITY * (buf.height + 30))
 
   return [
     [

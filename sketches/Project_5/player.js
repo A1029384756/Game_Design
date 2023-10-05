@@ -1,5 +1,7 @@
 class Player extends Component {}
 
+const PLAYER_X_VEL = 1
+
 class PlayerControl extends System {
   constructor() {
     super()
@@ -31,10 +33,10 @@ class PlayerControl extends System {
 
       // Move left and right
       if (keyIsDown(LEFT_ARROW)) {
-        player_transform.pos.x -= 2
+        player_transform.pos.x -= PLAYER_X_VEL
       }
       if (keyIsDown(RIGHT_ARROW)) {
-        player_transform.pos.x += 2
+        player_transform.pos.x += PLAYER_X_VEL
       }
     })
   }

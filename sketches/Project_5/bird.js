@@ -171,7 +171,7 @@ class BirdDefaultBehavior extends System {
 
       // Move target x position every 30 frames
       if (frameCount % 30 == 0) {
-        bird.target_x = random(50, 160)
+        bird.target_x = random(80, 160)
       }
 
       // Move to target x position if not there
@@ -524,8 +524,10 @@ const balls_to_avoid = (bird_transform, bird_collider, ball_query) => {
   ball_query.forEach((b_c, _) => {
     let ball_transform = system_get_transform(b_c)
     let ball_collider = system_get_collider(b_c)
-    if (predict_collision(bird_collider, bird_transform, ball_collider, ball_transform, 5)) {
-      result.push(predict_position(ball_transform, 5))
+    for (let i = 1; i <= 5; i++) {
+      if (predict_collision(bird_collider, bird_transform, ball_collider, ball_transform, i)) {
+        result.push(predict_position(ball_transform, i))
+      }
     }
   })
 
