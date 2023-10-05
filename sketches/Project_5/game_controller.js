@@ -51,6 +51,7 @@ class GameController {
     this.world.register_system(new BirdBallBehavior())
     this.world.register_system(new BirdCollision())
     this.world.register_system(new BirdAnimation())
+    this.world.register_system(new BirdLabeling())
     
     this.world.register_system(new ScoreBoard())
     this.world.register_system(new ApplyGravity())
@@ -72,7 +73,8 @@ class GameController {
       new Gravity(createVector(0, -1)),
       new BirdDefault(),
       new Collider(30, 30),
-      new Sensor(60, 60)
+      new Sensor(60, 60),
+      new GameText('', 15, createVector(0, -30))
     ])
 
     this.spawn_entity([

@@ -114,11 +114,14 @@ class RenderUI extends System {
     text_query.forEach((t_c, _) => {
       let text_c = system_get_text(t_c)
       let text_transform = system_get_transform(t_c)
+      let offset = copy_vector(text_c.offset)
 
       fill('black')
+      translate(offset)
       textAlign(CENTER, CENTER)
-      textSize(30)
+      textSize(text_c.size)
       text(text_c.text, text_transform.pos.x, text_transform.pos.y)
+      translate(offset.mult(-1))
     })
   }
 }

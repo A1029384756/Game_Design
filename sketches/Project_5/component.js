@@ -12,22 +12,30 @@ class Button extends Component {
    * @param {Number} height
    * @param {String} color
    * @param {Function} action
+   * @param {Vector} offset
    */
-  constructor(text = '', width = 0, height = 0, color = 'red', action = () => {}) {
+  constructor(text = '', width = 0, height = 0, color = 'red', action = () => {}, offset = createVector()) {
     super()
     this.text = text
     this.width = width
     this.height = height
     this.color = color
     this.action = action
+    this.offset = offset
   }
 }
 
 class GameText extends Component {
-  /** @param {String} text */
-  constructor(text = '') {
+  /** 
+   * @param {String} text 
+   * @param {Number} size
+   * @param {Vector} offset
+   */
+  constructor(text = '', size = 30, offset = createVector()) {
     super()
     this.text = text
+    this.size = size
+    this.offset = offset
   }
 }
 

@@ -27,9 +27,11 @@ class Registry {
   spawn_entity(components) {
     let entity_id = this.id_generator.create_id()
     components.forEach(c => {
-      this.registry
-        .get(c.name)
-        .set(entity_id, c)
+      if (this.registry.get(c.name) !== undefined) {
+        this.registry
+          .get(c.name)
+          .set(entity_id, c)
+      }
     })
     this.entity_count++
     return entity_id
@@ -61,7 +63,9 @@ class Registry {
    */
   remove_components(entity, components) {
     components.forEach(c => {
-      this.registry.get(c.name).delete(entity)
+      if (this.registry.get(c.name)) {
+        this.registry.get(c.name).delete(entity)
+      }
     })
   }
 }

@@ -7,6 +7,71 @@ class Bird extends Component {
   }
 }
 
+class BirdLabeling extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Bird(),
+        new BirdDefault(),
+        new GameText()
+      ]),
+      new Query([
+        new Bird(),
+        new BirdBuilding(),
+        new GameText()
+      ]),
+      new Query([
+        new Bird(),
+        new BirdMonster(),
+        new GameText()
+      ]),
+      new Query([
+        new Bird(),
+        new BirdBall(),
+        new GameText()
+      ]),
+      new Query([
+        new Bird(),
+        new BirdBorder(),
+        new GameText()
+      ]),
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let b_default = r[0]
+    let building = r[1]
+    let monster = r[2]
+    let ball = r[3]
+    let border = r[4]
+
+    b_default.forEach((c, _) => {
+      let text = system_get_text(c)
+      text.text = 'Default'
+    })
+    building.forEach((c, _) => {
+      let text = system_get_text(c)
+      text.text = 'Building'
+    })
+    monster.forEach((c, _) => {
+      let text = system_get_text(c)
+      text.text = 'Monster'
+    })
+    ball.forEach((c, _) => {
+      let text = system_get_text(c)
+      text.text = 'Ball'
+    })
+    border.forEach((c, _) => {
+      let text = system_get_text(c)
+      text.text = 'Border'
+    })
+  }
+}
+
 class BirdCollision extends System {
   constructor() {
     super()
