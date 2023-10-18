@@ -25,6 +25,11 @@ class World {
     })
   }
 
+  /** @param {String} system_name */
+  deregister_system(system_name) {
+    this.systems = this.systems.filter((sys) => sys.name !== system_name)
+  }
+
   /** 
    * @param {Component[]} components 
    * @returns {Entity}

@@ -9,13 +9,11 @@ class Button extends Component {
   /** 
    * @param {Image} img
    * @param {Function} action
-   * @param {Vector} pos
    */
-  constructor(img = createImage(0, 0), action = () => {}, pos = createVector()) {
+  constructor(img = createImage(0, 0), action = () => { }) {
     super()
     this.img = img
     this.action = action
-    this.pos = pos
   }
 }
 
@@ -23,28 +21,27 @@ class GameText extends Component {
   /** 
    * @param {String} text 
    * @param {Number} size
-   * @param {Vector} pos
    * @param {[Number, Number, Number]} color
    */
-  constructor(text = '', size = 30, pos = createVector(), color = [0, 0, 0]) {
+  constructor(text = '', size = 30, color = [0, 0, 0]) {
     super()
     this.text = text
     this.size = size
-    this.pos = pos
     this.color = color
   }
 }
 
 class Sprite extends Component {
   /** 
-   * @param {Image} img 
-   * @param {Number} [frame_count=1] 
+   * @param {Image[]} imgs
+   * @param {[Number, Number, Number, Number]} tint
    */
-  constructor(img = createImage(0, 0), frame_count = 1) {
+  constructor(imgs = [createImage(0, 0)], tint = [255, 255, 255, 255]) {
     super()
-    this.img = img
-    this.frame_count = frame_count
+    this.imgs = imgs
     this.curr_frame = 0
+    this.frame_count = imgs.length
+    this.tint = tint
   }
 }
 
@@ -83,5 +80,15 @@ class Sensor extends Collider {
     super()
     this.x_offset = x_offset
     this.y_offset = y_offset
+  }
+}
+
+class Health extends Component {
+  /**
+   * @param {Number} health
+   */
+  constructor(health = 0) {
+    super()
+    this.health = health
   }
 }

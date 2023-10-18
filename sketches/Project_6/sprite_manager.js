@@ -8,10 +8,17 @@ class SpriteManager {
 
   /** 
    * @param {String} name
-   * @param {Sprite} sprite 
+   * @param {Image} img 
+   * @param {Number} frame_count
    */
-  add_sprite(name, sprite) {
-    this.sprite_table.set(name, sprite)
+  add_sprite(name, img, frame_count = 1) {
+    let sprites = /** @type {Image[]} */ ([])
+    for (let i = 0; i < frame_count; i++) {
+      sprites.push(img.get(0, (img.height / frame_count) * i,
+        img.width,
+        img.height / frame_count))
+    }
+    this.sprite_table.set(name, new Sprite(sprites))
   }
 
   /**

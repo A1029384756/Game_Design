@@ -69,3 +69,21 @@ const system_get_gravity = (components) => {
   // @ts-ignore
   return components.find(c => c instanceof Gravity)
 }
+
+/**
+ * @param {Component[]} components 
+ * @returns {Health}
+ */
+const system_get_health = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof Health)
+}
+
+/**
+ * @param {Component[]} components 
+ * @returns {Lifetime}
+ */
+const system_get_lifetime = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof Lifetime)
+}

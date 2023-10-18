@@ -26,13 +26,21 @@ function copy_vector(v = createVector()) {
 }
 
 /**
-  * @param {Collider} c1
+ * @param {any} obj
+ * @returns {any}
+ */
+function clone_object(obj) {
+  return Object.assign(Object.create(Object.getPrototypeOf(obj)), obj)
+}
+
+/**
   * @param {Vector} p1
-  * @param {Collider} c2
+  * @param {Collider} c1
   * @param {Vector} p2
+  * @param {Collider} c2
   * @returns {Boolean}
   */
-const collides = (c1, p1, c2, p2) => {
+const collides = (p1, c1, p2, c2) => {
   const r1x_min = p1.x - c1.w / 2
   const r1x_max = p1.x + c1.w / 2
   const r1y_min = p1.y - c1.h / 2

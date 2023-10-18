@@ -1,5 +1,27 @@
 const GRAVITY = -0.1
 
+class VelocityMovement extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Transform(),
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let transforms = r[0]
+    transforms.forEach((t_c, _) => {
+      let transform = system_get_transform(t_c)
+      transform.pos.add(transform.vel)
+    })
+  }
+}
+
 class Gravity extends Component {
   /**
   * @param {Number} mag

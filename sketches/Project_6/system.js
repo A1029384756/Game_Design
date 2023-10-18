@@ -1,5 +1,7 @@
 class System {
   constructor() {
+    /** @type {String} */
+    this.name = this.constructor.name
     /** @type {Query[]} */
     this.query_set = [new Query([])]
   }
@@ -19,7 +21,18 @@ class RenderSprites extends System {
         new Transform()
       ])
     ]
+
+    // System local variables
+    // to prevent allocations
+    // on subsequent function
+    // calls
     this.sprite_transforms = []
+    /** @type {Transform} */
+    this.transform
+    /** @type {Vector} */
+    this.pos
+    /** @type {Sprite} */
+    this.sprite
   }
 
   /**
@@ -35,33 +48,27 @@ class RenderSprites extends System {
       })
     })
 
+    game_controller.game_buffer.image(sprite_manager.get_sprite('background').imgs[0], 0, 0)
     this.sprite_transforms.sort((a, b) => a.transform.pos.z - b.transform.pos.z).forEach(st => {
-      /** @type {Transform} */
-      let transform = st.transform
-      /** @type {Vector} */
-      let pos = copy_vector(transform.pos)
-      /** @type {Sprite} */
-      let sprite = st.sprite
+      this.transform = st.transform
+      this.pos = copy_vector(this.transform.pos)
+      this.sprite = st.sprite
 
       if (
-        pos.x < -game_controller.canvas.width - sprite.img.width ||
-        pos.x > game_controller.canvas.width + sprite.img.width ||
-        pos.y < -game_controller.canvas.height - sprite.img.height ||
-        pos.y > game_controller.canvas.height + sprite.img.height
+        this.pos.x < -game_controller.canvas.width - this.sprite.imgs[this.sprite.curr_frame].width ||
+        this.pos.x > game_controller.canvas.width + this.sprite.imgs[this.sprite.curr_frame].width ||
+        this.pos.y < -game_controller.canvas.height - this.sprite.imgs[this.sprite.curr_frame].height ||
+        this.pos.y > game_controller.canvas.height + this.sprite.imgs[this.sprite.curr_frame].height
       ) {
         return
       }
 
-      translate(pos)
-      rotate(transform.dir)
-      image(sprite.img.get(
-        0,
-        (sprite.img.height / sprite.frame_count) * sprite.curr_frame,
-        sprite.img.width,
-        sprite.img.height / sprite.frame_count
-      ), -sprite.img.width / 2, -sprite.img.height / (2 * sprite.frame_count))
-      rotate(-transform.dir)
-      translate(pos.mult(createVector(-1, -1)))
+      game_controller.game_buffer.translate(this.pos)
+      game_controller.game_buffer.rotate(this.transform.dir)
+      game_controller.game_buffer.tint(this.sprite.tint)
+      game_controller.game_buffer.image(this.sprite.imgs[this.sprite.curr_frame], -this.sprite.imgs[this.sprite.curr_frame].width / 2, -this.sprite.imgs[this.sprite.curr_frame].height / 2)
+      game_controller.game_buffer.rotate(-this.transform.dir)
+      game_controller.game_buffer.translate(this.pos.mult(createVector(-1, -1)))
     })
 
     this.sprite_transforms.length = 0
@@ -95,7 +102,11 @@ class RenderUI extends System {
       let button = system_get_button(b_c)
       let button_transform = system_get_transform(b_c)
 
-      image(button_transform.pos.x - button.img.width / 2, button_transform.pos.y - button.img.height / 2, button.img.width, button.img.height, 15)
+      game_controller.ui_buffer.image(
+        button.img,
+        button_transform.pos.x - button.img.width / 2,
+        button_transform.pos.y - button.img.height / 2, 
+      )
 
       const top_left_bound = mouseX > button_transform.pos.x - button.img.width / 2 && mouseY > button_transform.pos.y - button.img.height / 2
       const bottom_right_bound = mouseX < button_transform.pos.x + button.img.width / 2 && mouseY < button_transform.pos.y + button.img.height / 2
@@ -108,14 +119,18 @@ class RenderUI extends System {
     text_query.forEach((t_c, _) => {
       let text_c = system_get_text(t_c)
       let text_transform = system_get_transform(t_c)
-      let pos = copy_vector(text_c.pos)
+      let pos = copy_vector(text_transform.pos)
 
-      fill(text_c.color[0], text_c.color[1], text_c.color[2])
-      translate(pos)
-      textAlign(CENTER, CENTER)
-      textSize(text_c.size)
-      text(text_c.text, text_transform.pos.x, text_transform.pos.y)
-      translate(pos.mult(-1))
+      game_controller.ui_buffer.fill(text_c.color[0], text_c.color[1], text_c.color[2])
+      game_controller.ui_buffer.translate(pos)
+      game_controller.ui_buffer.textAlign(CENTER, CENTER)
+      game_controller.ui_buffer.textSize(text_c.size)
+      game_controller.ui_buffer.text(
+        text_c.text,
+        text_transform.pos.x - CANVAS_WIDTH / 2,
+        text_transform.pos.y
+      )
+      game_controller.ui_buffer.translate(pos.mult(-1))
     })
   }
 }
