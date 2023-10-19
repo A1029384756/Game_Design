@@ -18,14 +18,6 @@ class IdGenerator {
 }
 
 /**
- * @param {Vector} [v=createVector()] 
- * @returns {Vector}
- */
-function copy_vector(v = createVector()) {
-  return createVector(v.x, v.y, v.z)
-}
-
-/**
  * @param {any} obj
  * @returns {any}
  */
