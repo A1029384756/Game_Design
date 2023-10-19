@@ -451,9 +451,88 @@ const player_sprite = () => {
 
 /** @returns {Image} */
 const alien_sprite = () => {
-  let buf = createGraphics(ALIEN_SPRITE_SIZE, ALIEN_SPRITE_SIZE)
-  buf.fill('red')
-  buf.ellipse(ALIEN_SPRITE_SIZE / 2, ALIEN_SPRITE_SIZE / 2, buf.width, buf.height)
+  const subdiv = () => {
+    split_points()
+    average()
+  }
+
+  const split_points = () => {
+    point_arr.splice(0, point_arr.length);
+    for (var i = 0; i < points.length - 1; i++) {
+      point_arr.push(createVector(points[i].x, points[i].y));
+      point_arr.push(createVector((points[i].x + points[i + 1].x) / 2,
+        (points[i].y + points[i + 1].y) / 2));
+    }
+    point_arr.push(createVector(points[i].x, points[i].y));
+    point_arr.push(createVector((points[0].x + points[i].x) / 2, (points[0].y +
+      points[i].y) / 2));
+  }
+
+  const average = () => {
+    for (var i = 0; i < point_arr.length - 1; i++) {
+      var x = (point_arr[i].x + point_arr[i + 1].x) / 2;
+      var y = (point_arr[i].y + point_arr[i + 1].y) / 2;
+      point_arr[i].set(x, y);
+    }
+    var x = (point_arr[i].x + points[0].x) / 2;
+    var y = (point_arr[i].y + points[0].y) / 2;
+    points.splice(0, points.length);
+    for (i = 0; i < point_arr.length; i++) {
+      points.push(createVector(point_arr[i].x, point_arr[i].y));
+    }
+  }
+
+  let point_arr = /** @type {Vector[]} */ ([])
+  let points = /** @type {Vector[]} */ ([])
+  let buf = /** @type {Graphics} */ (createGraphics(ALIEN_SPRITE_SIZE, ALIEN_SPRITE_SIZE))
+
+  points.push(createVector(0, ALIEN_SPRITE_SIZE / 2))
+  points.push(createVector(ALIEN_SPRITE_SIZE / 4, 10))
+  points.push(createVector(3 * ALIEN_SPRITE_SIZE / 4, 10))
+  points.push(createVector(ALIEN_SPRITE_SIZE, ALIEN_SPRITE_SIZE / 2))
+  points.push(createVector(ALIEN_SPRITE_SIZE, ALIEN_SPRITE_SIZE))
+  points.push(createVector(0, ALIEN_SPRITE_SIZE))
+  buf.fill('gray')
+  buf.stroke('white')
+  for (let i = 0; i < 5; i++) {
+    subdiv()
+  }
+  buf.beginShape()
+  points.forEach((pt) => buf.vertex(pt.x, pt.y))
+  buf.vertex(points[0].x, points[0].y)
+  buf.endShape()
+  points.length = 0
+
+  points.push(createVector(ALIEN_SPRITE_SIZE / 4, 0))
+  points.push(createVector(3 * ALIEN_SPRITE_SIZE / 4, 0))
+  points.push(createVector(3 * ALIEN_SPRITE_SIZE / 4, ALIEN_SPRITE_SIZE / 2))
+  points.push(createVector(ALIEN_SPRITE_SIZE / 4, ALIEN_SPRITE_SIZE / 2))
+  buf.fill('cyan')
+  buf.stroke('white')
+  for (let i = 0; i < 5; i++) {
+    subdiv()
+  }
+  buf.beginShape()
+  points.forEach((pt) => buf.vertex(pt.x, pt.y))
+  buf.vertex(points[0].x, points[0].y)
+  buf.endShape()
+  points.length = 0
+
+  points.push(createVector(ALIEN_SPRITE_SIZE / 2, 4 * ALIEN_SPRITE_SIZE / 5))
+  points.push(createVector(4 * ALIEN_SPRITE_SIZE / 5, 9 * ALIEN_SPRITE_SIZE / 10))
+  points.push(createVector(ALIEN_SPRITE_SIZE / 2, ALIEN_SPRITE_SIZE))
+  points.push(createVector(1 * ALIEN_SPRITE_SIZE / 5, 9 * ALIEN_SPRITE_SIZE / 10))
+  buf.fill('orange')
+  buf.stroke('white')
+  for (let i = 0; i < 5; i++) {
+    subdiv()
+  }
+  buf.beginShape()
+  points.forEach((pt) => buf.vertex(pt.x, pt.y))
+  buf.vertex(points[0].x, points[0].y)
+  buf.endShape()
+  points.length = 0
+  return buf.get()
   return buf.get()
 }
 
