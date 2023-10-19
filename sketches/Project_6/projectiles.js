@@ -119,7 +119,7 @@ class MissileTrail extends System {
       let missile_transform = system_get_transform(m_c)
 
       let vel = /** @type {Vector} */ (clone_object(missile_transform.vel))
-      vel.setMag(random(0.5, 1)).mult(-1)
+      vel.setMag(random(0.5, 1)).mult(-1).setHeading(vel.heading() + random(-0.3, 0.3))
 
       game_controller.spawn_entity([
         new Particle(),
