@@ -52,7 +52,6 @@ class RenderSprites extends System {
       this.transform = st.transform
       this.pos = clone_object(this.transform.pos)
       this.sprite = st.sprite
-      this.pos.sub(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
 
       if (
         this.pos.x < -game_controller.canvas.width - this.sprite.imgs[this.sprite.curr_frame].width ||

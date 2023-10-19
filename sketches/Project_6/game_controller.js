@@ -4,9 +4,9 @@ const CANVAS_HEIGHT = 400
 class GameController {
   constructor() {
     /** @type {Renderer} */
-    this.canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT, WEBGL)
+    this.canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT)
     /** @type {Graphics} */
-    this.game_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT, WEBGL)
+    this.game_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
     /** @type {Graphics} */
     this.ui_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
     this.world = new World()
@@ -28,8 +28,8 @@ class GameController {
 
   frame() {
     this.world.update()
-    image(this.game_buffer, -CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2)
-    image(this.ui_buffer, -CANVAS_WIDTH / 2, -CANVAS_HEIGHT / 2)
+    image(this.game_buffer, 0, 0)
+    image(this.ui_buffer, 0, 0)
     this.game_buffer.clear(0, 0, 0, 0)
     this.ui_buffer.clear(0, 0, 0, 0)
   }
