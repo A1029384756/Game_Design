@@ -48,11 +48,15 @@ class RenderSprites extends System {
       })
     })
 
-    game_controller.game_buffer.image(sprite_manager.get_sprite('background').imgs[0], 0, 0)
+    if (frameCount % 30 == 0) {
+      console.log(this.sprite_transforms.length)
+    }
+
     this.sprite_transforms.sort((a, b) => a.transform.pos.z - b.transform.pos.z).forEach(st => {
       this.transform = st.transform
-      this.pos = copy_vector(this.transform.pos)
+      this.pos = clone_object(this.transform.pos)
       this.sprite = st.sprite
+      this.pos.sub(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2)
 
       if (
         this.pos.x < -game_controller.canvas.width - this.sprite.imgs[this.sprite.curr_frame].width ||
@@ -63,12 +67,12 @@ class RenderSprites extends System {
         return
       }
 
-      game_controller.game_buffer.translate(this.pos)
+      game_controller.game_buffer.translate(createVector(this.pos.x, this.pos.y))
       game_controller.game_buffer.rotate(this.transform.dir)
       game_controller.game_buffer.tint(this.sprite.tint)
       game_controller.game_buffer.image(this.sprite.imgs[this.sprite.curr_frame], -this.sprite.imgs[this.sprite.curr_frame].width / 2, -this.sprite.imgs[this.sprite.curr_frame].height / 2)
       game_controller.game_buffer.rotate(-this.transform.dir)
-      game_controller.game_buffer.translate(this.pos.mult(createVector(-1, -1)))
+      game_controller.game_buffer.translate(createVector(this.pos.x, this.pos.y).mult(createVector(-1, -1)))
     })
 
     this.sprite_transforms.length = 0
@@ -88,7 +92,20 @@ class RenderUI extends System {
         new Transform()
       ])
     ]
-    this.sprite_transforms = []
+    /** @type {Button} */
+    this.button
+    /** @type {Transform} */
+    this.button_transform
+    /** @type {GameText} */
+    this.text_c
+    /** @type {Transform} */
+    this.text_transform
+    /** @type {Vector} */
+    this.text_pos
+    /** @type {Boolean} */
+    this.top_left_bound
+    /** @type {Boolean} */
+    this.bottom_right_bound
   }
 
   /**
@@ -99,38 +116,38 @@ class RenderUI extends System {
     let text_query = r[1]
 
     button_query.forEach((b_c, _) => {
-      let button = system_get_button(b_c)
-      let button_transform = system_get_transform(b_c)
+      this.button = system_get_button(b_c)
+      this.button_transform = system_get_transform(b_c)
 
       game_controller.ui_buffer.image(
-        button.img,
-        button_transform.pos.x - button.img.width / 2,
-        button_transform.pos.y - button.img.height / 2, 
+        this.button.img,
+        this.button_transform.pos.x - this.button.img.width / 2,
+        this.button_transform.pos.y - this.button.img.height / 2,
       )
 
-      const top_left_bound = mouseX > button_transform.pos.x - button.img.width / 2 && mouseY > button_transform.pos.y - button.img.height / 2
-      const bottom_right_bound = mouseX < button_transform.pos.x + button.img.width / 2 && mouseY < button_transform.pos.y + button.img.height / 2
+      this.top_left_bound = mouseX > this.button_transform.pos.x - this.button.img.width / 2 && mouseY > this.button_transform.pos.y - this.button.img.height / 2
+      this.bottom_right_bound = mouseX < this.button_transform.pos.x + this.button.img.width / 2 && mouseY < this.button_transform.pos.y + this.button.img.height / 2
 
-      if (top_left_bound && bottom_right_bound && mouseIsPressed) {
-        button.action()
+      if (this.top_left_bound && this.bottom_right_bound && mouseIsPressed) {
+        this.button.action()
       }
     })
 
     text_query.forEach((t_c, _) => {
-      let text_c = system_get_text(t_c)
-      let text_transform = system_get_transform(t_c)
-      let pos = copy_vector(text_transform.pos)
+      this.text_c = system_get_text(t_c)
+      this.text_transform = system_get_transform(t_c)
+      this.pos = clone_object(this.text_transform.pos)
 
-      game_controller.ui_buffer.fill(text_c.color[0], text_c.color[1], text_c.color[2])
-      game_controller.ui_buffer.translate(pos)
+      game_controller.ui_buffer.fill(this.text_c.color[0], this.text_c.color[1], this.text_c.color[2])
+      game_controller.ui_buffer.translate(createVector(this.pos.x, this.pos.y))
       game_controller.ui_buffer.textAlign(CENTER, CENTER)
-      game_controller.ui_buffer.textSize(text_c.size)
+      game_controller.ui_buffer.textSize(this.text_c.size)
       game_controller.ui_buffer.text(
-        text_c.text,
-        text_transform.pos.x - CANVAS_WIDTH / 2,
-        text_transform.pos.y
+        this.text_c.text,
+        this.text_transform.pos.x - CANVAS_WIDTH / 2,
+        this.text_transform.pos.y
       )
-      game_controller.ui_buffer.translate(pos.mult(-1))
+      game_controller.ui_buffer.translate(createVector(this.pos.x, this.pos.y).mult(createVector(-1, -1)))
     })
   }
 }

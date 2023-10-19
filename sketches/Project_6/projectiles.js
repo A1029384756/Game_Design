@@ -32,7 +32,7 @@ class MissileSeeking extends System {
       players.forEach((p_c, _) => {
         let player_transform = system_get_transform(p_c)
 
-        let delta = copy_vector(player_transform.pos).sub(missile_transform.pos)
+        let delta = clone_object(player_transform.pos).sub(missile_transform.pos)
         missile_transform.vel = delta.setMag(3)
         missile_transform.dir = delta.heading()
       })
@@ -113,11 +113,10 @@ class MissileTrail extends System {
     missiles.forEach((m_c, _) => {
       let missile_transform = system_get_transform(m_c)
 
-      let vel = copy_vector(missile_transform.vel)
+      let vel = clone_object(missile_transform.vel)
       vel.setHeading(vel.heading() + random(-0.8, 0.8))
       vel.setMag(random(0.1, 0.5)).mult(-1)
 
-      let sp = sprite_manager.get_sprite('missile_particle')
       game_controller.spawn_entity([
         new Particle(),
         new Lifetime(30),
@@ -129,7 +128,7 @@ class MissileTrail extends System {
           ),
           vel,
         ),
-        /** @type {Sprite} */ (clone_object(sp)),
+        clone_object(sprite_manager.get_sprite('missile_particle')),
       ])
     })
   }

@@ -6,7 +6,7 @@ class GameController {
     /** @type {Renderer} */
     this.canvas = createCanvas(CANVAS_WIDTH, CANVAS_HEIGHT, WEBGL)
     /** @type {Graphics} */
-    this.game_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
+    this.game_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT, WEBGL)
     /** @type {Graphics} */
     this.ui_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
     this.world = new World()
@@ -57,6 +57,12 @@ class GameController {
     this.world.register_system(new RenderSprites())
     this.world.register_system(new RenderUI())
 
+    this.spawn_entity([
+      sprite_manager.get_sprite('background'),
+      new Transform(
+        createVector(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, -Infinity)
+      )
+    ])
 
     for (let y = 0; y < 3; y += 1) {
       for (let x = 0; x < 5; x += 1) {
@@ -93,7 +99,7 @@ class GameController {
     console.log('win')
     this.world.deregister_system('PlayerVictory')
     this.spawn_entity([
-      new GameText('You Win!'),
+      new GameText('You Win!', 30, [255, 255, 255]),
       new Transform(createVector(200, 100)),
     ])
     this.spawn_entity([

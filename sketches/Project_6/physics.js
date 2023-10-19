@@ -53,7 +53,7 @@ class ApplyGravity extends System {
     grav_query.forEach((c, _) => {
       let gravity = system_get_gravity(c)
       let transform = system_get_transform(c)
-      let grav_dir = copy_vector(gravity.dir)
+      let grav_dir = clone_object(gravity.dir)
 
       // Update position and velocity
       // using basic newtonian physics
