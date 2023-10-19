@@ -39,6 +39,7 @@ class MissileSeeking extends System {
 
       if (missile_transform.vel.magSq() == 0) {
         missile_transform.vel = createVector(0, 3)
+        missile_transform.dir = missile_transform.vel.heading()
       }
     })
   }
