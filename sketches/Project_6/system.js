@@ -48,10 +48,6 @@ class RenderSprites extends System {
       })
     })
 
-    if (frameCount % 30 == 0) {
-      console.log(this.sprite_transforms.length)
-    }
-
     this.sprite_transforms.sort((a, b) => a.transform.pos.z - b.transform.pos.z).forEach(st => {
       this.transform = st.transform
       this.pos = clone_object(this.transform.pos)

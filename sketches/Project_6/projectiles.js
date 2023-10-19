@@ -36,6 +36,10 @@ class MissileSeeking extends System {
         missile_transform.vel = delta.setMag(3)
         missile_transform.dir = delta.heading()
       })
+
+      if (missile_transform.vel.magSq() == 0) {
+        missile_transform.vel = createVector(0, 3)
+      }
     })
   }
 }
@@ -113,9 +117,8 @@ class MissileTrail extends System {
     missiles.forEach((m_c, _) => {
       let missile_transform = system_get_transform(m_c)
 
-      let vel = clone_object(missile_transform.vel)
-      vel.setHeading(vel.heading() + random(-0.8, 0.8))
-      vel.setMag(random(0.1, 0.5)).mult(-1)
+      let vel = /** @type {Vector} */ (clone_object(missile_transform.vel))
+      vel.setMag(random(0.5, 1)).mult(-1)
 
       game_controller.spawn_entity([
         new Particle(),

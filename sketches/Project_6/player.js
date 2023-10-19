@@ -62,6 +62,12 @@ class PlayerControl extends System {
           sprite_manager.get_sprite('bullet'),
         ])
       }
+
+      if (player_transform.pos.x < PLAYER_SPRITE_SIZE / 2) {
+        player_transform.pos.x = PLAYER_SPRITE_SIZE / 2
+      } else if (player_transform.pos.x > CANVAS_WIDTH - PLAYER_SPRITE_SIZE / 2) {
+        player_transform.pos.x = CANVAS_WIDTH - PLAYER_SPRITE_SIZE / 2
+      }
     })
   }
 }

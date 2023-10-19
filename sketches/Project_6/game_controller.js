@@ -96,15 +96,15 @@ class GameController {
   }
 
   win_game() {
-    console.log('win')
     this.world.deregister_system('PlayerVictory')
     this.spawn_entity([
-      new GameText('You Win!', 30, [255, 255, 255]),
+      new GameText('You Win!\nPlay again?', 30, [255, 255, 255]),
       new Transform(createVector(200, 100)),
     ])
     this.spawn_entity([
       new Button(
         sprite_manager.get_sprite('restart_button').imgs[0],
+        this.setup_game.bind(this),
       ),
       new Transform(
         createVector(200, 300),
@@ -113,10 +113,9 @@ class GameController {
   }
 
   lose_game() {
-    console.log('lose')
     this.world.deregister_system('PlayerVictory')
     this.spawn_entity([
-      new GameText('You Lose!', 30, [255, 255, 255]),
+      new GameText('You Lose!\nPlay again?', 30, [255, 255, 255]),
       new Transform(createVector(200, 100)),
     ])
     this.spawn_entity([
