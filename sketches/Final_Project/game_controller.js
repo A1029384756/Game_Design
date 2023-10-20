@@ -8,7 +8,6 @@ class GameController {
   constructor() {
     /** @type {Renderer} */
     this.canvas = createCanvas(PANE_WIDTH, PANE_HEIGHT, WEBGL)
-    noSmooth()
 
     /** @type {Graphics} */
     this.game_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
@@ -33,10 +32,16 @@ class GameController {
 
   frame() {
     this.world.update()
-    image(this.game_buffer, -PANE_WIDTH / 2, -PANE_HEIGHT / 2, PANE_WIDTH, PANE_HEIGHT)
-    // texture(this.game_buffer)
-    // plane(PANE_WIDTH, PANE_HEIGHT)
-    image(this.ui_buffer, -PANE_WIDTH / 2, -PANE_HEIGHT / 2, PANE_WIDTH, PANE_HEIGHT)
+    // @ts-ignore
+    let game_texture = this.canvas.getTexture(this.game_buffer)
+    game_texture.setInterpolation(NEAREST, NEAREST)
+    image(game_texture, -PANE_WIDTH / 2, -PANE_HEIGHT / 2, PANE_WIDTH, PANE_HEIGHT)
+
+    // @ts-ignore
+    let ui_texture = this.canvas.getTexture(this.ui_buffer)
+    ui_texture.setInterpolation(NEAREST, NEAREST)
+    image(ui_texture, -PANE_WIDTH / 2, -PANE_HEIGHT / 2, PANE_WIDTH, PANE_HEIGHT)
+
     this.game_buffer.clear(0, 0, 0, 0)
     this.ui_buffer.clear(0, 0, 0, 0)
   }
@@ -71,8 +76,8 @@ class GameController {
       )
     ])
 
-    for (let y = 0; y < 3; y += 1) {
-      for (let x = 0; x < 5; x += 1) {
+    for (let y = 0; y < 1; y += 1) {
+      for (let x = 0; x < 2; x += 1) {
         this.spawn_entity([
           new Alien(),
           new Health(2),
@@ -93,8 +98,8 @@ class GameController {
       new Player(),
       new Transform(
         createVector(
-          this.canvas.width / 2,
-          this.canvas.height - PLAYER_SPRITE_SIZE,
+          CANVAS_WIDTH / 2,
+          CANVAS_HEIGHT - PLAYER_SPRITE_SIZE,
         )
       ),
       new Collider(PLAYER_SPRITE_SIZE, PLAYER_SPRITE_SIZE),
@@ -105,8 +110,8 @@ class GameController {
   win_game() {
     this.world.deregister_system('PlayerVictory')
     this.spawn_entity([
-      new GameText('You Win!\nPlay again?', 30, [255, 255, 255]),
-      new Transform(createVector(200, 100)),
+      new GameText('You Win!\nPlay again?', 15, [255, 255, 255]),
+      new Transform(createVector(100, 50)),
     ])
     this.spawn_entity([
       new Button(
@@ -114,7 +119,7 @@ class GameController {
         this.setup_game.bind(this),
       ),
       new Transform(
-        createVector(200, 300),
+        createVector(100, 125),
       )
     ])
   }
@@ -122,8 +127,8 @@ class GameController {
   lose_game() {
     this.world.deregister_system('PlayerVictory')
     this.spawn_entity([
-      new GameText('You Lose!\nPlay again?', 30, [255, 255, 255]),
-      new Transform(createVector(200, 100)),
+      new GameText('You Lose!\nPlay again?', 15, [255, 255, 255]),
+      new Transform(createVector(100, 50)),
     ])
     this.spawn_entity([
       new Button(
@@ -131,7 +136,7 @@ class GameController {
         this.setup_game.bind(this),
       ),
       new Transform(
-        createVector(200, 300),
+        createVector(100, 125),
       )
     ])
   }

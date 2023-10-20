@@ -48,10 +48,10 @@ class RenderSprites extends System {
       this.filter_transform = clone_object(system_get_transform(c_list))
 
       if (
-        this.filter_transform.pos.x < -game_controller.canvas.width - this.filter_sprite.imgs[this.filter_sprite.curr_frame].width ||
-        this.filter_transform.pos.x > game_controller.canvas.width + this.filter_sprite.imgs[this.filter_sprite.curr_frame].width ||
-        this.filter_transform.pos.y < -game_controller.canvas.height - this.filter_sprite.imgs[this.filter_sprite.curr_frame].height ||
-        this.filter_transform.pos.y > game_controller.canvas.height + this.filter_sprite.imgs[this.filter_sprite.curr_frame].height
+        this.filter_transform.pos.x < -CANVAS_WIDTH - this.filter_sprite.imgs[this.filter_sprite.curr_frame].width ||
+        this.filter_transform.pos.x > CANVAS_WIDTH + this.filter_sprite.imgs[this.filter_sprite.curr_frame].width ||
+        this.filter_transform.pos.y < -CANVAS_HEIGHT - this.filter_sprite.imgs[this.filter_sprite.curr_frame].height ||
+        this.filter_transform.pos.y > CANVAS_HEIGHT + this.filter_sprite.imgs[this.filter_sprite.curr_frame].height
       ) {
         return
       }
@@ -118,14 +118,17 @@ class RenderUI extends System {
       this.button = system_get_button(b_c)
       this.button_transform = system_get_transform(b_c)
 
+      game_controller.ui_buffer.push()
+      game_controller.ui_buffer.translate(createVector(this.button_transform.pos.x, this.button_transform.pos.y))
       game_controller.ui_buffer.image(
         this.button.img,
-        this.button_transform.pos.x - this.button.img.width / 2,
-        this.button_transform.pos.y - this.button.img.height / 2,
+        -this.button.img.width / 2,
+        -this.button.img.height / 2,
       )
+      game_controller.ui_buffer.pop()
 
-      this.top_left_bound = mouseX > this.button_transform.pos.x - this.button.img.width / 2 && mouseY > this.button_transform.pos.y - this.button.img.height / 2
-      this.bottom_right_bound = mouseX < this.button_transform.pos.x + this.button.img.width / 2 && mouseY < this.button_transform.pos.y + this.button.img.height / 2
+      this.top_left_bound = mouseX * CANVAS_WIDTH / PANE_WIDTH > this.button_transform.pos.x - this.button.img.width / 2 && mouseY * CANVAS_HEIGHT / PANE_HEIGHT > this.button_transform.pos.y - this.button.img.height / 2
+      this.bottom_right_bound = mouseX * CANVAS_WIDTH / PANE_WIDTH < this.button_transform.pos.x + this.button.img.width / 2 && mouseY * CANVAS_HEIGHT / PANE_HEIGHT < this.button_transform.pos.y + this.button.img.height / 2
 
       if (this.top_left_bound && this.bottom_right_bound && mouseIsPressed) {
         this.button.action()
@@ -142,11 +145,7 @@ class RenderUI extends System {
       game_controller.ui_buffer.translate(createVector(this.pos.x, this.pos.y))
       game_controller.ui_buffer.textAlign(CENTER, CENTER)
       game_controller.ui_buffer.textSize(this.text_c.size)
-      game_controller.ui_buffer.text(
-        this.text_c.text,
-        this.text_transform.pos.x - CANVAS_WIDTH / 2,
-        this.text_transform.pos.y
-      )
+      game_controller.ui_buffer.text(this.text_c.text, 0, 0)
       game_controller.ui_buffer.pop()
     })
   }

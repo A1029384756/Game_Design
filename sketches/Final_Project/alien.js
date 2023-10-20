@@ -20,7 +20,7 @@ class AlienMovement extends System {
   work(r) {
     let aliens = r[0]
 
-    let leftmost = game_controller.canvas.width
+    let leftmost = CANVAS_WIDTH
     let rightmost = 0
     aliens.forEach((a_c, _) => {
       let transform = system_get_transform(a_c)
@@ -33,7 +33,7 @@ class AlienMovement extends System {
 
     if (
       leftmost < ALIEN_SPRITE_SIZE / 2 ||
-      rightmost > game_controller.canvas.width - ALIEN_SPRITE_SIZE / 2
+      rightmost > CANVAS_WIDTH - ALIEN_SPRITE_SIZE / 2
     ) {
       aliens.forEach((a_c, _) => {
         let transform = system_get_transform(a_c)
