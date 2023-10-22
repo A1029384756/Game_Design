@@ -68,9 +68,12 @@ class RenderSprites extends System {
 
       game_controller.game_buffer.push()
       game_controller.game_buffer.translate(createVector(this.pos.x, this.pos.y))
+      if (!this.sprite.facing_right) {
+        game_controller.game_buffer.scale(-1, 1)
+      }
       game_controller.game_buffer.rotate(st.transform.dir)
-      game_controller.game_buffer.tint(this.sprite.tint)
       game_controller.game_buffer.image(this.sprite.imgs[this.sprite.curr_frame], -this.sprite.imgs[this.sprite.curr_frame].width / 2, -this.sprite.imgs[this.sprite.curr_frame].height / 2)
+      game_controller.game_buffer.translate(createVector(this.pos.x, this.pos.y).mult(-1))
       game_controller.game_buffer.pop()
     })
 

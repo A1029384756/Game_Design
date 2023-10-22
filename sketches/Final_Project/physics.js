@@ -1,4 +1,4 @@
-const GRAVITY = -0.1
+const GRAVITY = -0.075
 
 class VelocityMovement extends System {
   constructor() {

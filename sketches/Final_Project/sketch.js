@@ -3,16 +3,39 @@ let game_controller
 /** @type {SpriteManager} */
 let sprite_manager
 
-function setup() {
-  sprite_manager = new SpriteManager()
-  sprite_manager.add_sprite('player', player_sprite())
-  sprite_manager.add_sprite('alien', alien_sprite())
-  sprite_manager.add_sprite('missile', missile_sprite())
-  sprite_manager.add_sprite('bullet', bullet_sprite())
-  sprite_manager.add_sprite('missile_particle', missile_particle_sprite())
-  sprite_manager.add_sprite('restart_button', restart_button_sprite())
-  sprite_manager.add_sprite('background', background_image())
+/** @type {Level[]} */
+let levels
+const TILE_SIZE = 8
 
+function preload() {
+  sprite_manager = new SpriteManager()
+  let tiles = /** @type {Image[]} */ ([])
+  loadImage('/libraries/cavernas.png', (img) => {
+    for (let y = 0; y < img.height; y += TILE_SIZE) {
+      for (let x = 0; x < img.width; x += TILE_SIZE) {
+        tiles.push(img.get(x, y, TILE_SIZE, TILE_SIZE))
+      }
+    }
+  })
+  sprite_manager.add_spritesheet('tilemap', tiles)
+
+  loadImage('/libraries/player_idle.png', (img) => {
+    img.resize(img.width / 3, img.height / 3)
+    sprite_manager.add_sprite('player_idle', img, 10)
+  })
+  loadImage('/libraries/player_run.png', (img) => {
+    img.resize(img.width / 3, img.height / 3)
+    sprite_manager.add_sprite('player_run', img, 8)
+  })
+
+  let img = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
+  img.background(BACKGROUND_COLOR)
+  sprite_manager.add_sprite('background', img)
+
+  levels = /** @type {Level[]} */ (loadJSON('/libraries/levels.json'))
+}
+
+function setup() {
   game_controller = new GameController()
 }
 

@@ -34,14 +34,13 @@ class GameText extends Component {
 class Sprite extends Component {
   /** 
    * @param {Image[]} imgs
-   * @param {[Number, Number, Number, Number]} tint
    */
-  constructor(imgs = [createImage(0, 0)], tint = [255, 255, 255, 255]) {
+  constructor(imgs = [createImage(0, 0)]) {
     super()
     this.imgs = imgs
     this.curr_frame = 0
     this.frame_count = imgs.length
-    this.tint = tint
+    this.facing_right = true
   }
 }
 
