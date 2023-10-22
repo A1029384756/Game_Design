@@ -1,7 +1,7 @@
 class Player extends Component {
   constructor() {
     super()
-    this.jump_delay = 400
+    this.jump_delay = 200
     this.jump_timer = this.jump_delay
     this.total_jumps = 2
     this.jumps_remaining = this.total_jumps
@@ -37,6 +37,7 @@ class PlayerMovement extends System {
         keyIsDown(32) &&
         keyIsDown(83)
       ) {
+        player.jump_timer = 0
         player_transform.vel.y = -PLAYER_JUMP
         player.downward_jump = true
       } else if (
