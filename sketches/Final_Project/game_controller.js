@@ -72,17 +72,21 @@ class GameController {
     this.world.register_system(new ApplyGravity())
 
     this.world.register_system(new PlayerPhysics())
+
+    this.world.register_system(new FollowPlayer())
     this.world.register_system(new RenderSprites())
     this.world.register_system(new RenderUI())
 
     this.spawn_entity([
-      sprite_manager.get_sprite('background'),
-      new Transform(createVector(CANVAS_WIDTH / 2, CANVAS_HEIGHT / 2, -Infinity)),
+      new Camera(),
+      new Transform(createVector(76, 75)),
     ])
 
-    get_serialized_level(0, 0, 0).forEach((bundle) => {
-      this.spawn_entity(bundle)
-    })
+    this.spawn_entity([
+      new Background(),
+      sprite_manager.get_sprite('background'),
+      new Transform(createVector(150, 75, -Infinity)),
+    ])
 
     this.spawn_entity([
       sprite_manager.get_sprite('player_idle'),
@@ -94,6 +98,13 @@ class GameController {
       ),
       new Idle(),
     ])
+
+    get_serialized_level(0, 0, 0).forEach((bundle) => {
+      this.spawn_entity(bundle)
+    })
+    get_serialized_level(0, -160, 1).forEach((bundle) => {
+      this.spawn_entity(bundle)
+    })
   }
 
   win_game() {

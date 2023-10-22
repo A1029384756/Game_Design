@@ -1,3 +1,5 @@
+class Camera extends Component {}
+
 class System {
   constructor() {
     /** @type {String} */
@@ -19,7 +21,11 @@ class RenderSprites extends System {
       new Query([
         new Sprite(),
         new Transform()
-      ])
+      ]),
+      new Query([
+        new Camera(),
+        new Transform()
+      ]),
     ]
 
     // System local variables
@@ -31,8 +37,6 @@ class RenderSprites extends System {
     this.filter_transform
     /** @type {Sprite} */
     this.filter_sprite
-    /** @type {Vector} */
-    this.pos
     /** @type {Sprite} */
     this.sprite
   }
@@ -42,6 +46,13 @@ class RenderSprites extends System {
    */
   work(r) {
     let sprite_query = r[0]
+    let cameras = r[1]
+
+    let camera_pos = /** @type {Vector} */ (createVector())
+    cameras.forEach((c_c, _) => {
+      let cam_transform = system_get_transform(c_c)
+      camera_pos = cam_transform.pos
+    })
 
     sprite_query.forEach((c_list, _) => {
       this.filter_sprite = system_get_sprite(c_list)
@@ -62,20 +73,21 @@ class RenderSprites extends System {
       })
     })
 
+    game_controller.game_buffer.push()
+    game_controller.game_buffer.translate(-camera_pos.x + CANVAS_WIDTH / 2, -camera_pos.y + CANVAS_HEIGHT / 2)
     this.sprite_transforms.sort((a, b) => a.transform.pos.z - b.transform.pos.z).forEach(st => {
-      this.pos = clone_object(st.transform.pos)
       this.sprite = st.sprite
 
       game_controller.game_buffer.push()
-      game_controller.game_buffer.translate(createVector(this.pos.x, this.pos.y))
+      game_controller.game_buffer.translate(createVector(st.transform.pos.x, st.transform.pos.y))
       if (!this.sprite.facing_right) {
         game_controller.game_buffer.scale(-1, 1)
       }
       game_controller.game_buffer.rotate(st.transform.dir)
       game_controller.game_buffer.image(this.sprite.imgs[this.sprite.curr_frame], -this.sprite.imgs[this.sprite.curr_frame].width / 2, -this.sprite.imgs[this.sprite.curr_frame].height / 2)
-      game_controller.game_buffer.translate(createVector(this.pos.x, this.pos.y).mult(-1))
       game_controller.game_buffer.pop()
     })
+    game_controller.game_buffer.pop()
 
     this.sprite_transforms.length = 0
   }

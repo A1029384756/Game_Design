@@ -28,7 +28,7 @@ function preload() {
     sprite_manager.add_sprite('player_run', img, 8)
   })
 
-  let img = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
+  let img = createGraphics(CANVAS_WIDTH + 10, CANVAS_HEIGHT + 10)
   img.background(BACKGROUND_COLOR)
   sprite_manager.add_sprite('background', img)
 
