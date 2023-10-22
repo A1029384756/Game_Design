@@ -60,7 +60,6 @@ class GameController {
     this.world.register_system(new PlayerRun())
     this.world.register_system(new PlayerIdle())
 
-    this.world.register_system(new PlayerPhysics())
     this.world.register_system(new PlayerMovement())
 
     this.world.register_system(new AnimateFacing())
@@ -72,6 +71,7 @@ class GameController {
     this.world.register_system(new VelocityMovement())
     this.world.register_system(new ApplyGravity())
 
+    this.world.register_system(new PlayerPhysics())
     this.world.register_system(new RenderSprites())
     this.world.register_system(new RenderUI())
 

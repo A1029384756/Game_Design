@@ -5,11 +5,12 @@ class Player extends Component {
     this.jump_timer = this.jump_delay
     this.total_jumps = 2
     this.jumps_remaining = this.total_jumps
+    this.downward_jump = false
   }
 }
 
 const PLAYER_SPEED = 0.75
-const PLAYER_JUMP = -1.25
+const PLAYER_JUMP = -1.5
 
 class PlayerMovement extends System {
   constructor() {
@@ -33,6 +34,12 @@ class PlayerMovement extends System {
 
       player.jump_timer += deltaTime
       if (
+        keyIsDown(32) &&
+        keyIsDown(83)
+      ) {
+        player_transform.vel.y = -PLAYER_JUMP
+        player.downward_jump = true
+      } else if (
         keyIsDown(32) &&
         player.jump_timer >= player.jump_delay &&
         player.jumps_remaining > 0
@@ -93,7 +100,6 @@ class PlayerPhysics extends System {
       let player_collider = system_get_collider(p_c)
 
       ground_tiles.forEach((g_c, g_id) => {
-        const STICKY_THRESHOLD = 0.0004
         let ground_transform = system_get_transform(g_c)
         let ground_collider = system_get_collider(g_c)
 
@@ -105,60 +111,15 @@ class PlayerPhysics extends System {
             ground_collider,
           )
         ) {
-          let dx = (ground_transform.pos.x - player_transform.pos.x) / (ground_collider.w / 2)
-          let dy = (ground_transform.pos.y - player_transform.pos.y) / (ground_collider.h / 2)
-          let abs_dx = abs(dx)
-          let abs_dy = abs(dy)
-
-          if (abs(abs_dx - abs_dy) < 0.1) {
-            if (dx < 0) {
-              player_transform.pos.x = ground_transform.pos.x + ground_collider.w / 2 + player_collider.w / 2 + PLAYER_COLLISION_PADDING
-            } else {
-              player_transform.pos.x = ground_transform.pos.x - ground_collider.w / 2 - player_collider.w / 2 - PLAYER_COLLISION_PADDING
-            }
-
-            if (dy < 0) {
-              player_transform.pos.y = ground_transform.pos.y + ground_collider.h / 2 + player_collider.h / 2
-            } else {
-              player_transform.pos.y = ground_transform.pos.y - ground_collider.h / 2 - player_collider.h / 2
-            }
-            if (random() < 0.5) {
-              player_transform.vel.x = -player_transform.vel.x * 0.1;
-
-              if (abs(player_transform.vel.x) < STICKY_THRESHOLD) {
-                player_transform.vel.x = 0;
-              }
-            } else {
-              player_transform.vel.y = -player_transform.vel.y * 0.1;
-              if (abs(player_transform.vel.y) < STICKY_THRESHOLD) {
-                player_transform.vel.y = 0;
-              }
-            }
-          } else if (abs_dx > abs_dy) {
-            if (dx < 0) {
-              player_transform.pos.x = ground_transform.pos.x + ground_collider.w / 2 + player_collider.w / 2 + PLAYER_COLLISION_PADDING
-            } else {
-              player_transform.pos.x = ground_transform.pos.x - ground_collider.w / 2 - player_collider.w / 2 - PLAYER_COLLISION_PADDING
-            }
-
-            player_transform.vel.x = -player_transform.vel.x * 0.1;
-
-            if (abs(player_transform.vel.x) < STICKY_THRESHOLD) {
-              player_transform.vel.x = 0;
-            }
-          } else {
-            if (dy < 0) {
-              player_transform.pos.y = ground_transform.pos.y + ground_collider.h / 2 + player_collider.h / 2
-            } else {
-              player_transform.pos.y = ground_transform.pos.y - ground_collider.h / 2 - player_collider.h / 2
-              player.jumps_remaining = player.total_jumps
-            }
-
-            player_transform.vel.y = -player_transform.vel.y * 0.1
-            if (abs(player_transform.vel.y) < STICKY_THRESHOLD) {
-              player_transform.vel.y = 0
-              player.jumps_remaining = player.total_jumps
-            }
+          resolve_collision(
+            player_transform,
+            player_collider,
+            ground_transform,
+            ground_collider
+          )
+          if (abs(player_transform.vel.y) < 0.1 && ground_transform.pos.y > player_transform.pos.y) {
+            player.jumps_remaining = player.total_jumps
+            player.downward_jump = false
           }
         }
       })
@@ -166,6 +127,23 @@ class PlayerPhysics extends System {
       bridge_tiles.forEach((b_c, b_id) => {
         let bridge_transform = system_get_transform(b_c)
         let bridge_collider = system_get_collider(b_c)
+
+        if (
+          collides(
+            player_transform.pos,
+            player_collider,
+            bridge_transform.pos,
+            bridge_collider
+          ) && !player.downward_jump
+        ) {
+          if (player_transform.pos.y + player_collider.h / 2 - bridge_transform.pos.y - bridge_collider.h / 2 < 2) {
+            if (player_transform.vel.y > 0) {
+              player_transform.vel.y = 0
+              player_transform.pos.y = bridge_transform.pos.y - bridge_collider.h / 2 - player_collider.h / 2
+              player.jumps_remaining = player.total_jumps
+            }
+          }
+        }
       })
     })
   }
