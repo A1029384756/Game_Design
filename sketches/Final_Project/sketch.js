@@ -27,6 +27,18 @@ function preload() {
     img.resize(img.width / 3, img.height / 3)
     sprite_manager.add_sprite('player_run', img, 8)
   })
+  loadImage('/libraries/player_jump.png', (img) => {
+    img.resize(img.width / 3, img.height / 3)
+    sprite_manager.add_sprite('player_jump', img, 3)
+  })
+  loadImage('/libraries/player_fall.png', (img) => {
+    img.resize(img.width / 3, img.height / 3)
+    sprite_manager.add_sprite('player_fall', img, 6)
+  })
+  loadImage('/libraries/player_land.png', (img) => {
+    img.resize(img.width / 3, img.height / 3)
+    sprite_manager.add_sprite('player_land', img, 9)
+  })
 
   let img = createGraphics(CANVAS_WIDTH + 10, CANVAS_HEIGHT + 10)
   img.background(BACKGROUND_COLOR)

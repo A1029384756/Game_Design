@@ -6,6 +6,7 @@ class Player extends Component {
     this.total_jumps = 2
     this.jumps_remaining = this.total_jumps
     this.downward_jump = false
+    this.in_air = false
   }
 }
 
@@ -40,6 +41,7 @@ class PlayerMovement extends System {
         player.jump_timer = 0
         player_transform.vel.y = -PLAYER_JUMP
         player.downward_jump = true
+        player.in_air = true
       } else if (
         keyIsDown(32) &&
         player.jump_timer >= player.jump_delay &&
@@ -49,6 +51,7 @@ class PlayerMovement extends System {
         player.jumps_remaining -= 1
         player_transform.vel.y = PLAYER_JUMP
         player.downward_jump = false
+        player.in_air = true
       }
 
       let x_vel = 0
@@ -122,6 +125,7 @@ class PlayerPhysics extends System {
           if (abs(player_transform.vel.y) < 0.1 && ground_transform.pos.y > player_transform.pos.y) {
             player.jumps_remaining = player.total_jumps
             player.downward_jump = false
+            player.in_air = false
           }
         }
       })
@@ -144,6 +148,7 @@ class PlayerPhysics extends System {
               player_transform.vel.y = 0
               player_transform.pos.y = bridge_transform.pos.y - bridge_collider.h / 2 - player_collider.h / 2
               player.jumps_remaining = player.total_jumps
+              player.in_air = false
             }
           }
         }

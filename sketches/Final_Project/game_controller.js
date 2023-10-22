@@ -57,8 +57,11 @@ class GameController {
   setup_game() {
     this.world = new World()
 
-    this.world.register_system(new PlayerRun())
     this.world.register_system(new PlayerIdle())
+    this.world.register_system(new PlayerRun())
+    this.world.register_system(new PlayerJump())
+    this.world.register_system(new PlayerFall())
+    this.world.register_system(new PlayerLand())
 
     this.world.register_system(new PlayerMovement())
 
@@ -89,7 +92,7 @@ class GameController {
     ])
 
     this.spawn_entity([
-      sprite_manager.get_sprite('player_idle'),
+      clone_object(sprite_manager.get_sprite('player_idle')),
       new Player(),
       new Transform(createVector(76, 75)),
       new Gravity(),
