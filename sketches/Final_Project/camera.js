@@ -31,8 +31,8 @@ class FollowPlayer extends System {
       let camera_transform = system_get_transform(c_c)
       players.forEach((p_c, _) => {
         let player_transform = system_get_transform(p_c)
-        camera_transform.pos.x = round(player_transform.pos.x)
-        camera_transform.pos.y = round(player_transform.pos.y)
+        camera_transform.pos.x = player_transform.pos.x
+        camera_transform.pos.y = player_transform.pos.y
       })
     })
     backgrounds.forEach((b_c, _) => {

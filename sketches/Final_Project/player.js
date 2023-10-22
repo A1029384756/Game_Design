@@ -9,7 +9,7 @@ class Player extends Component {
   }
 }
 
-const PLAYER_SPEED = 0.75
+const PLAYER_SPEED = 1
 const PLAYER_JUMP = -1.25
 
 class PlayerMovement extends System {

@@ -18,6 +18,9 @@ class VelocityMovement extends System {
     transforms.forEach((t_c, _) => {
       let transform = system_get_transform(t_c)
       transform.pos.add(transform.vel)
+      transform.pos.x = round(transform.pos.x)
+      transform.pos.y = round(transform.pos.y)
+      transform.pos.z = round(transform.pos.z)
     })
   }
 }
