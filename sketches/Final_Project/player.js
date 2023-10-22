@@ -10,7 +10,7 @@ class Player extends Component {
 }
 
 const PLAYER_SPEED = 0.75
-const PLAYER_JUMP = -1.5
+const PLAYER_JUMP = -1.25
 
 class PlayerMovement extends System {
   constructor() {
@@ -28,7 +28,7 @@ class PlayerMovement extends System {
    */
   work(r) {
     let players = r[0]
-    players.forEach((p_c, p_id) => {
+    players.forEach((p_c, _) => {
       let player = system_get_player(p_c)
       let player_transform = system_get_transform(p_c)
 
@@ -47,6 +47,7 @@ class PlayerMovement extends System {
         player.jump_timer = 0
         player.jumps_remaining -= 1
         player_transform.vel.y = PLAYER_JUMP
+        player.downward_jump = false
       }
 
       let x_vel = 0
@@ -94,12 +95,12 @@ class PlayerPhysics extends System {
     let ground_tiles = r[1]
     let bridge_tiles = r[2]
 
-    players.forEach((p_c, p_id) => {
+    players.forEach((p_c, _) => {
       let player = system_get_player(p_c)
       let player_transform = system_get_transform(p_c)
       let player_collider = system_get_collider(p_c)
 
-      ground_tiles.forEach((g_c, g_id) => {
+      ground_tiles.forEach((g_c, _) => {
         let ground_transform = system_get_transform(g_c)
         let ground_collider = system_get_collider(g_c)
 
@@ -124,7 +125,7 @@ class PlayerPhysics extends System {
         }
       })
 
-      bridge_tiles.forEach((b_c, b_id) => {
+      bridge_tiles.forEach((b_c, _) => {
         let bridge_transform = system_get_transform(b_c)
         let bridge_collider = system_get_collider(b_c)
 
@@ -136,7 +137,8 @@ class PlayerPhysics extends System {
             bridge_collider
           ) && !player.downward_jump
         ) {
-          if (player_transform.pos.y + player_collider.h / 2 - bridge_transform.pos.y - bridge_collider.h / 2 < 2) {
+          let delta = (player_transform.pos.y + player_collider.h / 2) - (bridge_transform.pos.y - bridge_collider.h / 2)
+          if (delta < 3) {
             if (player_transform.vel.y > 0) {
               player_transform.vel.y = 0
               player_transform.pos.y = bridge_transform.pos.y - bridge_collider.h / 2 - player_collider.h / 2
