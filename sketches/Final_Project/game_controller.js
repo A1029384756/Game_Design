@@ -4,7 +4,7 @@ const CANVAS_HEIGHT = 160
 const PANE_WIDTH = 800
 const PANE_HEIGHT = 800
 
-const BACKGROUND_COLOR = '#171C39'
+const BACKGROUND_COLOR = '#121526'
 
 class GameController {
   constructor() {
@@ -57,22 +57,21 @@ class GameController {
   setup_game() {
     this.world = new World()
 
+    this.world.register_system(new ApplyGravity())
+    this.world.register_system(new PlayerPhysics())
+    this.world.register_system(new PlayerMovement())
+
     this.world.register_system(new PlayerIdle())
     this.world.register_system(new PlayerRun())
     this.world.register_system(new PlayerJump())
     this.world.register_system(new PlayerFall())
     this.world.register_system(new PlayerLand())
 
-    this.world.register_system(new PlayerMovement())
-
     this.world.register_system(new AnimateFacing())
     this.world.register_system(new AnimateSprites())
 
     this.world.register_system(new ParticleFadeOut())
     this.world.register_system(new LifetimeManagement())
-
-    this.world.register_system(new PlayerPhysics())
-    this.world.register_system(new ApplyGravity())
 
     this.world.register_system(new FollowPlayer())
     this.world.register_system(new RenderSprites())
@@ -95,7 +94,7 @@ class GameController {
       new Transform(createVector(76, 75)),
       new Gravity(),
       new Collider(
-        8, 8 
+        8, 15 
       ),
       new Idle(),
     ])

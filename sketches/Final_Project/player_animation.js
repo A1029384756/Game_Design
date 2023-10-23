@@ -236,6 +236,7 @@ class PlayerLand extends System {
   work(r) {
     let players = r[0]
     players.forEach((p_c, p_id) => {
+      let player = system_get_player(p_c)
       let sprite = system_get_sprite(p_c)
       let transform = system_get_transform(p_c)
 
@@ -255,6 +256,14 @@ class PlayerLand extends System {
           new Running(),
         ])
         update_sprite(sprite, sprite_manager.get_sprite('player_run'))
+      } else if (player.in_air) {
+        game_controller.world.remove_components(p_id, [
+          new Landing(),
+        ])
+        game_controller.world.add_components(p_id, [
+          new Jumping(),
+        ])
+        update_sprite(sprite, sprite_manager.get_sprite('player_jump'))
       }
     })
   }

@@ -10,8 +10,8 @@ class Player extends Component {
   }
 }
 
-const PLAYER_SPEED = 1.5
-const PLAYER_JUMP = -2
+const PLAYER_SPEED = 1.75
+const PLAYER_JUMP = -1.8
 
 class PlayerMovement extends System {
   constructor() {
@@ -39,7 +39,7 @@ class PlayerMovement extends System {
         keyIsDown(83)
       ) {
         player.jump_timer = 0
-        player_transform.vel.y = -PLAYER_JUMP
+        player_transform.vel.y = PLAYER_JUMP * PLAYER_JUMP
         player.downward_jump = true
         player.in_air = true
       } else if (
