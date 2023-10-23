@@ -10,8 +10,8 @@ class Player extends Component {
   }
 }
 
-const PLAYER_SPEED = 1
-const PLAYER_JUMP = -1.25
+const PLAYER_SPEED = 1.5
+const PLAYER_JUMP = -2
 
 class PlayerMovement extends System {
   constructor() {
@@ -104,55 +104,83 @@ class PlayerPhysics extends System {
       let player_transform = system_get_transform(p_c)
       let player_collider = system_get_collider(p_c)
 
-      ground_tiles.forEach((g_c, _) => {
-        let ground_transform = system_get_transform(g_c)
-        let ground_collider = system_get_collider(g_c)
+      /** @param {Vector} pos */
+      const collide_at = (pos) => {
+        let collide = false
 
-        if (
-          collides(
-            player_transform.pos,
+        for (let [_, g_c] of ground_tiles.entries()) {
+          let ground_transform = system_get_transform(g_c)
+          let ground_collider = system_get_collider(g_c)
+          if (collides(
+            pos,
             player_collider,
             ground_transform.pos,
             ground_collider,
-          )
-        ) {
-          resolve_collision(
-            player_transform,
-            player_collider,
-            ground_transform,
-            ground_collider
-          )
-          if (abs(player_transform.vel.y) < 0.1 && ground_transform.pos.y > player_transform.pos.y) {
-            player.jumps_remaining = player.total_jumps
-            player.downward_jump = false
-            player.in_air = false
+          )) {
+            collide = true
+            break
           }
         }
-      })
 
-      bridge_tiles.forEach((b_c, _) => {
-        let bridge_transform = system_get_transform(b_c)
-        let bridge_collider = system_get_collider(b_c)
+        for (let [_, b_c] of bridge_tiles.entries()) {
+          let bridge_transform = system_get_transform(b_c)
+          let bridge_collider = system_get_collider(b_c)
 
-        if (
-          collides(
-            player_transform.pos,
+          if (collides(
+            pos,
             player_collider,
             bridge_transform.pos,
-            bridge_collider
-          ) && !player.downward_jump
-        ) {
-          let delta = (player_transform.pos.y + player_collider.h / 2) - (bridge_transform.pos.y - bridge_collider.h / 2)
-          if (delta < 3) {
-            if (player_transform.vel.y > 0) {
-              player_transform.vel.y = 0
-              player_transform.pos.y = bridge_transform.pos.y - bridge_collider.h / 2 - player_collider.h / 2
-              player.jumps_remaining = player.total_jumps
-              player.in_air = false
+            bridge_collider,
+          ) && !player.downward_jump) {
+            if ((player_transform.pos.y + player_collider.h / 2) - (bridge_transform.pos.y - bridge_collider.h / 2) < 0) {
+              collide = true
             }
+            break
           }
         }
-      })
+
+        return collide
+      }
+
+      player_transform.x_remainder += player_transform.vel.x
+      player_transform.y_remainder += player_transform.vel.y
+      let move_x = round(player_transform.x_remainder)
+      let move_y = round(player_transform.y_remainder)
+
+      if (move_x != 0) {
+        player_transform.x_remainder -= move_x
+        let x_sign = move_x > 0 ? 1 : -1
+        while (move_x != 0) {
+          if (!collide_at(createVector(player_transform.pos.x + x_sign, player_transform.pos.y))) {
+            player_transform.pos.x += x_sign
+            move_x -= x_sign
+          } else {
+            player_transform.vel.x = 0
+            break
+          }
+        }
+      }
+
+      if (move_y != 0) {
+        player_transform.y_remainder -= move_y
+        let y_sign = move_y > 0 ? 1 : -1
+        while (move_y != 0) {
+          if (!collide_at(createVector(player_transform.pos.x, player_transform.pos.y + y_sign))) {
+            player.in_air = true
+            player_transform.pos.y += y_sign
+            move_y -= y_sign
+          } else {
+            player_transform.vel.y = 0
+
+            if (y_sign > 0) {
+              player.jumps_remaining = player.total_jumps
+              player.downward_jump = false
+              player.in_air = false
+            }
+            break
+          }
+        }
+      }
     })
   }
 }

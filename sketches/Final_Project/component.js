@@ -55,6 +55,8 @@ class Transform extends Component {
     this.pos = pos
     this.vel = vel
     this.dir = dir
+    this.x_remainder = 0
+    this.y_remainder = 0
   }
 }
 

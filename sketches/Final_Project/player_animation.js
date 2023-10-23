@@ -79,10 +79,11 @@ class PlayerIdle extends System {
   work(r) {
     let players = r[0]
     players.forEach((p_c, p_id) => {
+      let player = system_get_player(p_c)
       let transform = system_get_transform(p_c)
       let sprite = system_get_sprite(p_c)
 
-      if (abs(transform.vel.y) > 0.1) {
+      if (player.in_air) {
         game_controller.world.remove_components(p_id, [
           new Idle(),
         ])
@@ -90,7 +91,7 @@ class PlayerIdle extends System {
           new Jumping(),
         ])
         update_sprite(sprite, sprite_manager.get_sprite('player_jump'))
-      } else if (abs(transform.vel.x) > 0.1) {
+      } else if (abs(transform.vel.x) >= 0.1) {
         game_controller.world.remove_components(p_id, [
           new Idle(),
         ])
@@ -122,10 +123,11 @@ class PlayerRun extends System {
   work(r) {
     let players = r[0]
     players.forEach((p_c, p_id) => {
+      let player = system_get_player(p_c)
       let transform = system_get_transform(p_c)
       let sprite = system_get_sprite(p_c)
 
-      if (abs(transform.vel.y) > 0.1) {
+      if (player.in_air) {
         game_controller.world.remove_components(p_id, [
           new Running(),
         ])

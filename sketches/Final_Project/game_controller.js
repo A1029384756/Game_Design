@@ -71,10 +71,8 @@ class GameController {
     this.world.register_system(new ParticleFadeOut())
     this.world.register_system(new LifetimeManagement())
 
-    this.world.register_system(new VelocityMovement())
-    this.world.register_system(new ApplyGravity())
-
     this.world.register_system(new PlayerPhysics())
+    this.world.register_system(new ApplyGravity())
 
     this.world.register_system(new FollowPlayer())
     this.world.register_system(new RenderSprites())
@@ -97,7 +95,7 @@ class GameController {
       new Transform(createVector(76, 75)),
       new Gravity(),
       new Collider(
-        8, 12 
+        8, 8 
       ),
       new Idle(),
     ])
