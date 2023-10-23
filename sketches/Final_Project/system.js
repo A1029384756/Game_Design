@@ -1,4 +1,4 @@
-class Camera extends Component {}
+class Camera extends Component { }
 
 class System {
   constructor() {
@@ -59,10 +59,10 @@ class RenderSprites extends System {
       this.filter_transform = clone_object(system_get_transform(c_list))
 
       if (
-        this.filter_transform.pos.x < -CANVAS_WIDTH - this.filter_sprite.imgs[this.filter_sprite.curr_frame].width ||
-        this.filter_transform.pos.x > CANVAS_WIDTH + this.filter_sprite.imgs[this.filter_sprite.curr_frame].width ||
-        this.filter_transform.pos.y < -CANVAS_HEIGHT - this.filter_sprite.imgs[this.filter_sprite.curr_frame].height ||
-        this.filter_transform.pos.y > CANVAS_HEIGHT + this.filter_sprite.imgs[this.filter_sprite.curr_frame].height
+        this.filter_transform.pos.x < camera_pos.x - CANVAS_WIDTH / 2 - this.filter_sprite.imgs[this.filter_sprite.curr_frame].width / 2 ||
+        this.filter_transform.pos.x > camera_pos.x + CANVAS_WIDTH / 2 + this.filter_sprite.imgs[this.filter_sprite.curr_frame].width / 2 ||
+        this.filter_transform.pos.y < camera_pos.y - CANVAS_HEIGHT / 2 - this.filter_sprite.imgs[this.filter_sprite.curr_frame].height / 2 ||
+        this.filter_transform.pos.y > camera_pos.y + CANVAS_HEIGHT / 2 + this.filter_sprite.imgs[this.filter_sprite.curr_frame].height / 2
       ) {
         return
       }
