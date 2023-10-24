@@ -38,4 +38,12 @@ class SpriteManager {
   get_sprite(name) {
     return this.sprite_table.get(name)
   }
+
+  /**
+   * @param {String} name
+   * @returns {Image[]}
+   */
+  get_sprite_imgs(name) {
+    return this.sprite_table.get(name).imgs
+  }
 }

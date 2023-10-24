@@ -4,7 +4,7 @@ const CANVAS_HEIGHT = 160
 const PANE_WIDTH = 800
 const PANE_HEIGHT = 800
 
-const BACKGROUND_COLOR = '#121526'
+const BACKGROUND_COLOR = '#171C39'
 
 class GameController {
   constructor() {
@@ -16,11 +16,14 @@ class GameController {
     this.game_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
     /** @type {Graphics} */
     this.ui_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
+    this.ui_buffer.textFont(font)
+
     this.world = new World()
 
-    this.setup_game()
+    this.game_world = new World()
+    this.menu_world = new World()
+    this.option_world = new World()
 
-    this.score = 0
     this.size = min(windowWidth, windowHeight)
   }
 
@@ -35,6 +38,7 @@ class GameController {
   }
 
   frame() {
+    clear(0, 0, 0, 0)
     if (min(windowWidth, windowHeight) !== this.size) {
       this.size = min(windowWidth, windowHeight)
       resizeCanvas(this.size, this.size)
@@ -55,56 +59,7 @@ class GameController {
   }
 
   setup_game() {
-    this.world = new World()
-
-    this.world.register_system(new ApplyGravity())
-    this.world.register_system(new PlayerPhysics())
-    this.world.register_system(new PlayerMovement())
-
-    this.world.register_system(new PlayerIdle())
-    this.world.register_system(new PlayerRun())
-    this.world.register_system(new PlayerJump())
-    this.world.register_system(new PlayerFall())
-    this.world.register_system(new PlayerLand())
-
-    this.world.register_system(new AnimateFacing())
-    this.world.register_system(new AnimateSprites())
-
-    this.world.register_system(new ParticleFadeOut())
-    this.world.register_system(new LifetimeManagement())
-
-    this.world.register_system(new FollowPlayer())
-    this.world.register_system(new RenderSprites())
-    this.world.register_system(new RenderUI())
-
-    this.spawn_entity([
-      new Camera(),
-      new Transform(createVector(76, 75)),
-    ])
-
-    this.spawn_entity([
-      new Background(),
-      sprite_manager.get_sprite('background'),
-      new Transform(createVector(150, 75, -Infinity)),
-    ])
-
-    this.spawn_entity([
-      clone_object(sprite_manager.get_sprite('player_idle')),
-      new Player(),
-      new Transform(createVector(76, 75)),
-      new Gravity(),
-      new Collider(
-        8, 15 
-      ),
-      new Idle(),
-    ])
-
-    get_serialized_level(0, 0, 0).forEach((bundle) => {
-      this.spawn_entity(bundle)
-    })
-    get_serialized_level(0, -160, 1).forEach((bundle) => {
-      this.spawn_entity(bundle)
-    })
+    start_screen()
   }
 
   win_game() {

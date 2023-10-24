@@ -5,32 +5,6 @@ class Component {
   }
 }
 
-class Button extends Component {
-  /** 
-   * @param {Image} img
-   * @param {Function} action
-   */
-  constructor(img = createImage(0, 0), action = () => { }) {
-    super()
-    this.img = img
-    this.action = action
-  }
-}
-
-class GameText extends Component {
-  /** 
-   * @param {String} text 
-   * @param {Number} size
-   * @param {[Number, Number, Number]} color
-   */
-  constructor(text = '', size = 30, color = [0, 0, 0]) {
-    super()
-    this.text = text
-    this.size = size
-    this.color = color
-  }
-}
-
 class Sprite extends Component {
   /** 
    * @param {Image[]} imgs

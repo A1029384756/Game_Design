@@ -54,11 +54,20 @@ const system_get_button = (components) => {
 
 /**
  * @param {Component[]} components 
- * @returns {GameText}
+ * @returns {UIText}
  */
 const system_get_text = (components) => {
   // @ts-ignore
-  return components.find(c => c instanceof GameText)
+  return components.find(c => c instanceof UIText)
+}
+
+/**
+ * @param {Component[]} components 
+ * @returns {UIImage}
+ */
+const system_get_image = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof UIImage)
 }
 
 /**
