@@ -8,13 +8,14 @@ class Component {
 class Sprite extends Component {
   /** 
    * @param {Image[]} imgs
+   * @param {Boolean} facing_right
    */
-  constructor(imgs = [createImage(0, 0)]) {
+  constructor(imgs = [createImage(0, 0)], facing_right = true) {
     super()
     this.imgs = imgs
     this.curr_frame = 0
     this.frame_count = imgs.length
-    this.facing_right = true
+    this.facing_right = facing_right
   }
 }
 

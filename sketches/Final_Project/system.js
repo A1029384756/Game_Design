@@ -130,6 +130,9 @@ class RenderUI extends System {
 
       game_controller.ui_buffer.push()
       game_controller.ui_buffer.translate(createVector(transform.pos.x, transform.pos.y))
+      if (!img.facing_right) {
+        game_controller.ui_buffer.scale(-1, 1)
+      }
       game_controller.ui_buffer.image(
         img.imgs[img.curr_frame],
         -img.imgs[img.curr_frame].width / 2,

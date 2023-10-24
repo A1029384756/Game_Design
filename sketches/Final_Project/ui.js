@@ -28,12 +28,14 @@ class UIText extends Component {
 class UIImage extends Component {
   /**
    * @param {Image[]} imgs
+   * @param {Boolean} facing_right
    */
-  constructor(imgs = [createImage(0, 0)]) {
+  constructor(imgs = [createImage(0, 0)], facing_right = true) {
     super()
     this.curr_frame = 0
     this.imgs = imgs
     this.frame_count = imgs.length
+    this.facing_right = facing_right
   }
 }
 

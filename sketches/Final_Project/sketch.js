@@ -6,9 +6,6 @@ let sprite_manager
 /** @type {Level[]} */
 let levels
 
-/** @type {Font} */
-let font
-
 const TILE_SIZE = 8
 
 function preload() {
@@ -38,6 +35,35 @@ function preload() {
   loadImage('/libraries/player_land.png', (img) => {
     sprite_manager.add_sprite('player_land', img, 9)
   })
+  loadImage('/libraries/player_roll.png', (img) => {
+    sprite_manager.add_sprite('player_roll', img, 7)
+  })
+  loadImage('/libraries/player_jab.png', (img) => {
+    sprite_manager.add_sprite('player_jab', img, 8)
+  })
+  loadImage('/libraries/player_uppercut.png', (img) => {
+    sprite_manager.add_sprite('player_uppercut', img, 8)
+  })
+
+  loadImage('/libraries/Goblin_attack.png', (img) => {
+    sprite_manager.add_sprite('Goblin_attack', img, 8)
+  })
+  loadImage('/libraries/Goblin_damaged.png', (img) => {
+    sprite_manager.add_sprite('Goblin_damaged', img, 4)
+  })
+  loadImage('/libraries/Goblin_death.png', (img) => {
+    sprite_manager.add_sprite('Goblin_death', img, 4)
+  })
+  loadImage('/libraries/Goblin_idle.png', (img) => {
+    sprite_manager.add_sprite('Goblin_idle', img, 4)
+  })
+  loadImage('/libraries/Goblin_run.png', (img) => {
+    sprite_manager.add_sprite('Goblin_run', img, 8)
+  })
+
+  loadImage('/libraries/title_card.png', (img) => {
+    sprite_manager.add_sprite('title_card', img, 1)
+  })
   loadImage('/libraries/play_button.png', (img) => {
     sprite_manager.add_sprite('play_button', img, 2)
   })
@@ -54,8 +80,6 @@ function preload() {
   let img = createGraphics(CANVAS_WIDTH + 10, CANVAS_HEIGHT + 10)
   img.background(BACKGROUND_COLOR)
   sprite_manager.add_sprite('background', img)
-
-  font = loadFont('/libraries/pixel_font.ttf')
 
   levels = /** @type {Level[]} */ (loadJSON('/libraries/levels.json'))
 }

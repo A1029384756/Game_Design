@@ -16,7 +16,6 @@ class GameController {
     this.game_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
     /** @type {Graphics} */
     this.ui_buffer = createGraphics(CANVAS_WIDTH, CANVAS_HEIGHT)
-    this.ui_buffer.textFont(font)
 
     this.world = new World()
 
