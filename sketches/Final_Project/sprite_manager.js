@@ -23,6 +23,15 @@ class SpriteManager {
     this.sprite_table.set(name, new Sprite(images))
   }
 
+  /** 
+   * @param {String} name
+   * @param {Image[]} imgs
+   */
+  add_imgs(name, imgs) {
+    this.sprite_table.set(name, new Sprite(imgs))
+  }
+
+
   /**
    * @param {String} name
    * @param {Image[]} imgs

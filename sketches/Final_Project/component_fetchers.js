@@ -96,3 +96,12 @@ const system_get_lifetime = (components) => {
   // @ts-ignore
   return components.find(c => c instanceof Lifetime)
 }
+
+/**
+ * @param {Component[]} components 
+ * @returns {LoadingBar}
+ */
+const system_get_loading_bar = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof LoadingBar)
+}

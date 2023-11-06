@@ -19,6 +19,7 @@ class GameController {
 
     this.world = new World()
 
+    this.loading_world = new World()
     this.game_world = new World()
     this.menu_world = new World()
     this.option_world = new World()
@@ -58,7 +59,7 @@ class GameController {
   }
 
   setup_game() {
-    start_screen()
+    loading_screen(start_screen)
   }
 
   win_game() {

@@ -85,6 +85,8 @@ function preload() {
 }
 
 function setup() {
+  // @ts-ignore
+  levels = Object.values(levels)
   game_controller = new GameController()
   game_controller.setup_game()
 }
