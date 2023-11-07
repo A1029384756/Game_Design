@@ -53,7 +53,6 @@ const get_serialized_level = (x, y, level) => {
   let ground = lvl_imgs[1]
   let background = lvl_imgs[2]
 
-  let tilemap = sprite_manager.get_sprite('tilemap')
   level.tiles.forEach((tile) => {
     let tile_bundle = /** @type {Component[]} */ ([])
     if (tile.has_collider) {
@@ -107,13 +106,15 @@ const create_level_sprite = (level) => {
   let foreground = /** @type {Graphics} */ (createGraphics(LEVEL_SIZE, LEVEL_SIZE))
   let ground = /** @type {Graphics} */ (createGraphics(LEVEL_SIZE, LEVEL_SIZE))
   let background = /** @type {Graphics} */ (createGraphics(LEVEL_SIZE, LEVEL_SIZE))
+  let buf = /** @type {Graphics} */ (createGraphics(TILE_SIZE, TILE_SIZE))
   let tilemap = sprite_manager.get_sprite('tilemap')
   level.tiles.forEach((tile) => {
     let tile_bundle = /** @type {Component[]} */ ([])
     if (tile.has_collider) {
       tile_bundle.push(new Collider(TILE_SIZE, TILE_SIZE))
     }
-    let buf = /** @type {Graphics} */ (createGraphics(TILE_SIZE, TILE_SIZE))
+    buf.clear(0, 0, 0, 0)
+    buf.push()
     if (tile.sprite.dir == 1) {
       buf.scale(-1, 1)
       buf.image(tilemap.imgs[tile.sprite.tile], -TILE_SIZE, 0)
@@ -126,6 +127,7 @@ const create_level_sprite = (level) => {
     } else {
       buf.image(tilemap.imgs[tile.sprite.tile], 0, 0)
     }
+    buf.pop()
 
     if (tile.tile_type == 'Ground') {
       tile_bundle.push(new Ground())
