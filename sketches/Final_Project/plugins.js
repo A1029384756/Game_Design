@@ -7,6 +7,9 @@ const player_animation_plugin = (world) => {
   world.register_system(new PlayerJump())
   world.register_system(new PlayerFall())
   world.register_system(new PlayerLand())
+  world.register_system(new PlayerJab())
+  world.register_system(new PlayerRoll())
+  world.register_system(new PlayerUppercut())
   world.register_system(new AnimateFacing())
   world.register_system(new AnimateSprites())
 }
@@ -18,6 +21,7 @@ const player_plugin = (world) => {
   world.register_system(new ApplyGravity())
   world.register_system(new PlayerPhysics())
   world.register_system(new PlayerMovement())
+  world.register_system(new PlayerWin())
 
   player_animation_plugin(world)
 }

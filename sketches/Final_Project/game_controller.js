@@ -37,6 +37,31 @@ class GameController {
     this.world.despawn_entity(id)
   }
 
+  /** 
+   * @param {Query} query
+   * @returns {QueryResponse}
+  */
+  query_world(query) {
+    let selected_components = query.components.map(c => this.world.registry.registry.get(c.name)).filter(c => c !== undefined)
+
+    let entities = /** @type {Entity[]} */ (selected_components.reduce((accum, id) => [...accum, ...id.keys()], []))
+
+    let result = new Map()
+    entities.forEach(e => {
+      let components = []
+      for (let i = 0; i < selected_components.length; i++) {
+        if (selected_components[i].has(e)) {
+          components.push(selected_components[i].get(e))
+        } else {
+          return
+        }
+      }
+      result.set(e, components)
+    })
+
+    return result
+  }
+
   frame() {
     clear(0, 0, 0, 0)
     if (min(windowWidth, windowHeight) !== this.size) {
@@ -59,7 +84,7 @@ class GameController {
   }
 
   setup_game() {
-    loading_screen(start_screen)
+    loading_screen(start_screen, new LoadingLevel())
   }
 
   win_game() {

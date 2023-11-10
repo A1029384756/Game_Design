@@ -20,6 +20,13 @@ class WorldTile {
   sprite = new SerialSprite()
 }
 
+class SerializedEntity {
+  /** @type {String} */
+  type = ''
+  /** @type {[Number, Number]} */
+  rel_pos = [0, 0]
+}
+
 class Level {
   /** @type {Boolean} */
   top = false
@@ -31,6 +38,8 @@ class Level {
   bottom = false
   /** @type {WorldTile[]} */
   tiles = []
+  /** @type {SerializedEntity[]} */
+  entities = []
   /** @type {String} */
   id
 }
@@ -75,6 +84,40 @@ const get_serialized_level = (x, y, level) => {
       )
     )
     result.push(tile_bundle)
+  })
+
+  level.entities.forEach(e => {
+    let entity_bundle = /** @type {Component[]} */ ([])
+    if (e.type == 'Goblin') {
+      entity_bundle.push(sprite_manager.get_sprite('Goblin_idle'))
+      entity_bundle.push(
+        new Transform(
+          createVector(
+            x + e.rel_pos[0] + TILE_SIZE,
+            y + e.rel_pos[1] + TILE_SIZE,
+          )
+        )
+      )
+      entity_bundle.push(
+        new Collider(TILE_SIZE, 2 * TILE_SIZE),
+      )
+    } else if (e.type == 'Exit') {
+      entity_bundle.push(sprite_manager.get_sprite('exit_door'))
+      entity_bundle.push(
+        new Transform(
+          createVector(
+            x + e.rel_pos[0] + TILE_SIZE / 2,
+            y + e.rel_pos[1] + TILE_SIZE,
+          )
+        )
+      )
+      entity_bundle.push(
+        new Collider(TILE_SIZE, 2 * TILE_SIZE),
+      )
+      entity_bundle.push(new Exit())
+    }
+
+    result.push(entity_bundle)
   })
 
   result.push([

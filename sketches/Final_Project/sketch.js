@@ -4,7 +4,7 @@ let game_controller
 let sprite_manager
 
 /** @type {Level[]} */
-let levels
+let loaded_levels
 
 const TILE_SIZE = 8
 
@@ -61,6 +61,10 @@ function preload() {
     sprite_manager.add_sprite('Goblin_run', img, 8)
   })
 
+  loadImage('/libraries/exit_door.png', (img) => {
+    sprite_manager.add_sprite('exit_door', img, 1)
+  })
+
   loadImage('/libraries/title_card.png', (img) => {
     sprite_manager.add_sprite('title_card', img, 1)
   })
@@ -81,12 +85,11 @@ function preload() {
   img.background(BACKGROUND_COLOR)
   sprite_manager.add_sprite('background', img)
 
-  levels = /** @type {Level[]} */ (loadJSON('/libraries/levels.json'))
+  loaded_levels = /** @type {Level[]} */ (loadJSON('/libraries/levels.json'))
 }
 
 function setup() {
-  // @ts-ignore
-  levels = Object.values(levels)
+  loaded_levels = Object.values(loaded_levels)
   game_controller = new GameController()
   game_controller.setup_game()
 }

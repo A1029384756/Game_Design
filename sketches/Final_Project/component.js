@@ -5,6 +5,8 @@ class Component {
   }
 }
 
+class Exit extends Component {}
+
 class Sprite extends Component {
   /** 
    * @param {Image[]} imgs

@@ -1,8 +1,12 @@
-/** @param {Function} next_screen */
-const loading_screen = (next_screen = () => { }) => {
+/** 
+ * @param {Function} next_screen 
+ * @param {System} loading_process 
+ */
+const loading_screen = (next_screen = () => { }, loading_process = new System()) => {
   game_controller.world = game_controller.loading_world
+  game_controller.world = new World()
 
-  game_controller.world.register_system(new LoadingLevel())
+  game_controller.world.register_system(loading_process)
   game_controller.world.register_system(new UpdateLoadingBar())
   game_controller.world.register_system(new RenderUI())
 
@@ -71,17 +75,17 @@ const start_screen = () => {
     new Idle(),
   ])
 
-  get_serialized_level(0, 0, levels[0]).forEach((bundle) => {
+  get_serialized_level(0, 0, loaded_levels[0]).forEach((bundle) => {
     game_controller.spawn_entity(bundle)
   })
-  get_serialized_level(0, 160, levels[2]).forEach((bundle) => {
+  get_serialized_level(0, 160, loaded_levels[2]).forEach((bundle) => {
     game_controller.spawn_entity(bundle)
   })
 
   game_controller.spawn_entity([
     new Button(
       sprite_manager.get_sprite_imgs('play_button'),
-      game_world
+      () => loading_screen(game_world, new GeneratingLevel())
     ),
     new Transform(createVector(50, 120)),
   ])
@@ -102,13 +106,6 @@ const start_screen = () => {
 
 const game_world = () => {
   game_controller.world = game_controller.game_world
-  if (game_controller.world.registry.entity_count > 0) {
-    return
-  }
-  player_plugin(game_controller.world)
-  render_plugin(game_controller.world)
-
-  level_generation()
 
   game_controller.spawn_entity([
     new Camera(),

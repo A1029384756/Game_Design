@@ -1,8 +1,11 @@
-class Idle extends Component {}
-class Running extends Component {}
-class Jumping extends Component {}
-class Falling extends Component {}
-class Landing extends Component {}
+class Idle extends Component { }
+class Running extends Component { }
+class Jumping extends Component { }
+class Falling extends Component { }
+class Landing extends Component { }
+class Jabbing extends Component { }
+class Uppercutting extends Component { }
+class Rolling extends Component { }
 
 class AnimateFacing extends System {
   constructor() {
@@ -70,6 +73,9 @@ class PlayerIdle extends System {
         new Transform(),
         new Idle(),
       ]),
+      new Query([
+        new PlayerAttack(),
+      ])
     ]
   }
 
@@ -78,6 +84,7 @@ class PlayerIdle extends System {
   */
   work(r) {
     let players = r[0]
+    let attacks = r[1]
     players.forEach((p_c, p_id) => {
       let player = system_get_player(p_c)
       let transform = system_get_transform(p_c)
@@ -91,6 +98,29 @@ class PlayerIdle extends System {
           new Jumping(),
         ])
         update_sprite(sprite, sprite_manager.get_sprite('player_jump'))
+      } else if (player.attack_timer == 0) {
+        for (let [_, attack] of attacks) {
+          if (attack.find(a => a instanceof Attack1) !== undefined) {
+            game_controller.world.remove_components(p_id, [
+              new Idle(),
+            ])
+            game_controller.world.add_components(p_id, [
+              new Jabbing(),
+            ])
+            update_sprite(sprite, sprite_manager.get_sprite('player_jab'))
+            break
+          }
+          if (attack.find(a => a instanceof Attack2) !== undefined) {
+            game_controller.world.remove_components(p_id, [
+              new Idle(),
+            ])
+            game_controller.world.add_components(p_id, [
+              new Uppercutting(),
+            ])
+            update_sprite(sprite, sprite_manager.get_sprite('player_uppercut'))
+            break
+          }
+        }
       } else if (abs(transform.vel.x) >= 0.1) {
         game_controller.world.remove_components(p_id, [
           new Idle(),
@@ -113,15 +143,19 @@ class PlayerRun extends System {
         new Sprite(),
         new Transform(),
         new Running(),
+      ]),
+      new Query([
+        new PlayerAttack(),
       ])
     ]
   }
-  
+
   /**
    * @param {QueryResponse[]} r
    */
   work(r) {
     let players = r[0]
+    let attacks = r[1]
     players.forEach((p_c, p_id) => {
       let player = system_get_player(p_c)
       let transform = system_get_transform(p_c)
@@ -135,6 +169,39 @@ class PlayerRun extends System {
           new Jumping(),
         ])
         update_sprite(sprite, sprite_manager.get_sprite('player_jump'))
+      } else if (player.attack_timer == 0) {
+        for (let [_, attack] of attacks) {
+          if (attack.find(a => a instanceof Attack1) !== undefined) {
+            game_controller.world.remove_components(p_id, [
+              new Running(),
+            ])
+            game_controller.world.add_components(p_id, [
+              new Jabbing(),
+            ])
+            update_sprite(sprite, sprite_manager.get_sprite('player_jab'))
+            break
+          }
+          if (attack.find(a => a instanceof Attack2) !== undefined) {
+            game_controller.world.remove_components(p_id, [
+              new Running(),
+            ])
+            game_controller.world.add_components(p_id, [
+              new Uppercutting(),
+            ])
+            update_sprite(sprite, sprite_manager.get_sprite('player_uppercut'))
+            break
+          }
+        }
+      } else if (
+        player.i_frame_timer == player.i_frame_time
+      ) {
+        game_controller.world.remove_components(p_id, [
+          new Running(),
+        ])
+        game_controller.world.add_components(p_id, [
+          new Rolling(),
+        ])
+        update_sprite(sprite, sprite_manager.get_sprite('player_roll'))
       } else if (abs(transform.vel.x) < 0.1) {
         game_controller.world.remove_components(p_id, [
           new Running(),
@@ -227,6 +294,9 @@ class PlayerLand extends System {
         new Transform(),
         new Landing(),
       ]),
+      new Query([
+        new PlayerAttack(),
+      ])
     ]
   }
 
@@ -235,6 +305,7 @@ class PlayerLand extends System {
   */
   work(r) {
     let players = r[0]
+    let attacks = r[1]
     players.forEach((p_c, p_id) => {
       let player = system_get_player(p_c)
       let sprite = system_get_sprite(p_c)
@@ -248,6 +319,29 @@ class PlayerLand extends System {
           new Idle(),
         ])
         update_sprite(sprite, sprite_manager.get_sprite('player_idle'))
+      } else if (player.attack_timer == 0) {
+        for (let [_, attack] of attacks) {
+          if (attack.find(a => a instanceof Attack1) !== undefined) {
+            game_controller.world.remove_components(p_id, [
+              new Landing(),
+            ])
+            game_controller.world.add_components(p_id, [
+              new Jabbing(),
+            ])
+            update_sprite(sprite, sprite_manager.get_sprite('player_jab'))
+            break
+          }
+          if (attack.find(a => a instanceof Attack2) !== undefined) {
+            game_controller.world.remove_components(p_id, [
+              new Landing(),
+            ])
+            game_controller.world.add_components(p_id, [
+              new Uppercutting(),
+            ])
+            update_sprite(sprite, sprite_manager.get_sprite('player_uppercut'))
+            break
+          }
+        }
       } else if (abs(transform.vel.x) > 0.1) {
         game_controller.world.remove_components(p_id, [
           new Landing(),
@@ -264,6 +358,105 @@ class PlayerLand extends System {
           new Jumping(),
         ])
         update_sprite(sprite, sprite_manager.get_sprite('player_jump'))
+      }
+    })
+  }
+}
+
+class PlayerJab extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Player(),
+        new Sprite(),
+        new Jabbing(),
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let players = r[0]
+    players.forEach((p_c, p_id) => {
+      let sprite = system_get_sprite(p_c)
+
+      if (sprite.curr_frame == sprite.frame_count - 1) {
+        game_controller.world.remove_components(p_id, [
+          new Jabbing(),
+        ])
+        game_controller.world.add_components(p_id, [
+          new Idle(),
+        ])
+        update_sprite(sprite, sprite_manager.get_sprite('player_idle'))
+      }
+    })
+  }
+}
+
+class PlayerUppercut extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Player(),
+        new Sprite(),
+        new Uppercutting(),
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let players = r[0]
+    players.forEach((p_c, p_id) => {
+      let sprite = system_get_sprite(p_c)
+
+      if (sprite.curr_frame == sprite.frame_count - 1) {
+        game_controller.world.remove_components(p_id, [
+          new Uppercutting(),
+        ])
+        game_controller.world.add_components(p_id, [
+          new Idle(),
+        ])
+        update_sprite(sprite, sprite_manager.get_sprite('player_idle'))
+      }
+    })
+  }
+}
+
+class PlayerRoll extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Player(),
+        new Sprite(),
+        new Rolling(),
+      ])
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let players = r[0]
+    players.forEach((p_c, p_id) => {
+      let sprite = system_get_sprite(p_c)
+
+      if (sprite.curr_frame == sprite.frame_count - 1) {
+        game_controller.world.remove_components(p_id, [
+          new Rolling(),
+        ])
+        game_controller.world.add_components(p_id, [
+          new Idle(),
+        ])
+        update_sprite(sprite, sprite_manager.get_sprite('player_idle'))
       }
     })
   }

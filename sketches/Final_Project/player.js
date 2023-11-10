@@ -3,12 +3,27 @@ class Player extends Component {
     super()
     this.jump_delay = 200
     this.jump_timer = this.jump_delay
+    this.attack_delay = 800
+    this.attack_timer = this.attack_delay
+    this.i_frame_time = 400
+    this.i_frame_timer = this.i_frame_time
     this.total_jumps = 2
     this.jumps_remaining = this.total_jumps
     this.downward_jump = false
     this.in_air = false
   }
 }
+
+class PlayerAttack extends Component {
+  /** @param {Vector} dir */
+  constructor(dir = createVector()) {
+    super()
+    /** @type {Vector} */
+    this.dir = dir
+  }
+}
+class Attack1 extends Component { }
+class Attack2 extends Component { }
 
 const PLAYER_SPEED = 1.75
 const PLAYER_JUMP = -1.8
@@ -20,6 +35,10 @@ class PlayerMovement extends System {
       new Query([
         new Player(),
         new Transform(),
+        new Sprite(),
+      ]),
+      new Query([
+        new PlayerAttack(),
       ])
     ]
   }
@@ -29,16 +48,22 @@ class PlayerMovement extends System {
    */
   work(r) {
     let players = r[0]
+    let attacks = r[1]
+    let attack_active = attacks.size > 0
     players.forEach((p_c, _) => {
       let player = system_get_player(p_c)
       let player_transform = system_get_transform(p_c)
+      let sprite = system_get_sprite(p_c)
 
       player.jump_timer += deltaTime
+      player.attack_timer += deltaTime
+      player.i_frame_timer -= deltaTime
       if (
         keyIsDown(32) &&
         keyIsDown(83)
       ) {
         player.jump_timer = 0
+        player.attack_timer = player.attack_delay
         player_transform.vel.y = PLAYER_JUMP * PLAYER_JUMP
         player.downward_jump = true
         player.in_air = true
@@ -48,10 +73,58 @@ class PlayerMovement extends System {
         player.jumps_remaining > 0
       ) {
         player.jump_timer = 0
+        player.attack_timer = player.attack_delay
         player.jumps_remaining -= 1
         player_transform.vel.y = PLAYER_JUMP
         player.downward_jump = false
         player.in_air = true
+      }
+
+      if (!player.in_air) {
+        if (
+          keyIsDown(87) &&
+          player.i_frame_timer <= 0 &&
+          !attack_active &&
+          abs(player_transform.vel.x) > 0.1
+        ) {
+          player.i_frame_timer = player.i_frame_time
+        }
+        else if (
+          player.attack_timer >= player.attack_delay &&
+          player.i_frame_timer <= 0
+        ) {
+          let attack_x_offset = sprite.facing_right ? 15 : -15
+          let attack_x_dir = sprite.facing_right ? 1 : -1
+          if (keyIsDown(74)) {
+            player.attack_timer = 0
+            game_controller.spawn_entity([
+              new Attack1(),
+              new PlayerAttack(createVector(attack_x_dir)),
+              new Lifetime(8),
+              new Collider(8, 15),
+              new Transform(
+                createVector(
+                  player_transform.pos.x + attack_x_offset,
+                  player_transform.pos.y,
+                ),
+              ),
+            ])
+          } else if (keyIsDown(75)) {
+            player.attack_timer = 0
+            game_controller.spawn_entity([
+              new Attack2(),
+              new PlayerAttack(createVector(attack_x_dir, 1)),
+              new Lifetime(8),
+              new Collider(8, 15),
+              new Transform(
+                createVector(
+                  player_transform.pos.x + attack_x_offset,
+                  player_transform.pos.y,
+                ),
+              ),
+            ])
+          }
+        }
       }
 
       let x_vel = 0
@@ -181,6 +254,46 @@ class PlayerPhysics extends System {
           }
         }
       }
+    })
+  }
+}
+
+class PlayerWin extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Player(),
+        new Transform(),
+        new Collider(),
+      ]),
+      new Query([
+        new Exit(),
+        new Transform(),
+        new Collider(),
+      ]),
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    let players = r[0]
+    let exits = r[1]
+
+    players.forEach(c => {
+      let transform = system_get_transform(c)
+      let collider = system_get_collider(c)
+
+      exits.forEach(e => {
+        let exit_transform = system_get_transform(e)
+        let exit_collider = system_get_collider(e)
+
+        if (collides(transform.pos, collider, exit_transform.pos, exit_collider)) {
+          start_screen()
+        }
+      })
     })
   }
 }

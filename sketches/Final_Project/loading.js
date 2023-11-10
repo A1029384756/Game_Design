@@ -61,12 +61,12 @@ class LoadingLevel extends System {
     loading_bars.forEach(c => {
       let bar = system_get_loading_bar(c)
 
-      if (this.levels_loaded < levels.length) {
-        sprite_manager.add_imgs(levels[this.levels_loaded].id, create_level_sprite(levels[this.levels_loaded]))
+      if (this.levels_loaded < loaded_levels.length) {
+        sprite_manager.add_imgs(loaded_levels[this.levels_loaded].id, create_level_sprite(loaded_levels[this.levels_loaded]))
       }
       this.levels_loaded += 1
 
-      bar.progress = this.levels_loaded / levels.length
+      bar.progress = this.levels_loaded / loaded_levels.length
     })
   }
 }
