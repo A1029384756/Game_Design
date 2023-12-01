@@ -105,3 +105,30 @@ const system_get_loading_bar = (components) => {
   // @ts-ignore
   return components.find(c => c instanceof LoadingBar)
 }
+
+/**
+ * @param {Component[]} components 
+ * @returns {Goblin}
+ */
+const system_get_goblin = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof Goblin)
+}
+
+/**
+ * @param {Component[]} components 
+ * @returns {GoblinAttack}
+ */
+const system_get_goblin_attack = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof GoblinAttack)
+}
+
+/**
+ * @param {Component[]} components 
+ * @returns {GoblinAttack}
+ */
+const system_get_player_attack = (components) => {
+  // @ts-ignore
+  return components.find(c => c instanceof PlayerAttack)
+}

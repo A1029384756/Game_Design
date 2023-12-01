@@ -20,7 +20,7 @@ class SpriteManager {
         img.height)
       )
     }
-    this.sprite_table.set(name, new Sprite(images))
+    this.sprite_table.set(name, new Sprite(images, true, name))
   }
 
   /** 
@@ -28,7 +28,7 @@ class SpriteManager {
    * @param {Image[]} imgs
    */
   add_imgs(name, imgs) {
-    this.sprite_table.set(name, new Sprite(imgs))
+    this.sprite_table.set(name, new Sprite(imgs, true, name))
   }
 
 
@@ -37,7 +37,7 @@ class SpriteManager {
    * @param {Image[]} imgs
    */
   add_spritesheet(name, imgs) {
-    this.sprite_table.set(name, new Sprite(imgs))
+    this.sprite_table.set(name, new Sprite(imgs, true, name))
   }
 
   /**

@@ -80,6 +80,18 @@ function preload() {
   loadImage('/libraries/tutorial_screen.png', (img) => {
     sprite_manager.add_sprite('tutorial_screen', img, 1)
   })
+  loadImage('/libraries/restart_button.png', (img) => {
+    sprite_manager.add_sprite('restart_button', img, 2)
+  })
+  loadImage('/libraries/win_card.png', (img) => {
+    sprite_manager.add_sprite('win_card', img, 1)
+  })
+  loadImage('/libraries/lose_card.png', (img) => {
+    sprite_manager.add_sprite('lose_card', img, 1)
+  })
+  loadImage('/libraries/heart.png', (img) => {
+    sprite_manager.add_sprite('heart', img, 1)
+  })
 
   let img = createGraphics(CANVAS_WIDTH + 10, CANVAS_HEIGHT + 10)
   img.background(BACKGROUND_COLOR)

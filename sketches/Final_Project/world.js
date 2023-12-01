@@ -14,6 +14,10 @@ class World {
 
   /** @param {System} system */
   register_system(system) {
+    if (this.systems.find(sys => sys.name === system.name) !== undefined) {
+      return
+    }
+
     this.systems.push(system)
     system.query_set.forEach(q => {
       q.components.forEach(c => {

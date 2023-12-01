@@ -51,6 +51,7 @@ const start_screen = () => {
       8, 15
     ),
     new Idle(),
+    new Health(3),
   ])
 
   game_controller.spawn_entity([
@@ -127,6 +128,7 @@ const game_world = () => {
       8, 15
     ),
     new Idle(),
+    new Health(3),
   ])
 
 }
@@ -200,5 +202,58 @@ const tutorial_menu = () => {
       start_screen,
     ),
     new Transform(createVector(30, 20)),
+  ])
+}
+
+const win_screen = () => {
+  game_controller.world = game_controller.end_world
+
+  if (game_controller.world.registry.entity_count > 0) {
+    return
+  }
+
+  render_plugin(game_controller.world)
+  game_controller.world.spawn_entity([
+    sprite_manager.get_sprite('background'),
+    new Transform(createVector(0, 0, -Infinity)),
+  ])
+
+  game_controller.spawn_entity([
+    new UIImage(sprite_manager.get_sprite_imgs('win_card')),
+    new Transform(createVector(80, 60)),
+  ])
+
+  game_controller.spawn_entity([
+    new Button(
+      sprite_manager.get_sprite_imgs('restart_button'),
+      start_screen,
+    ),
+    new Transform(createVector(80, 100)),
+  ])
+}
+const lose_screen = () => {
+  game_controller.world = game_controller.end_world
+
+  if (game_controller.world.registry.entity_count > 0) {
+    return
+  }
+
+  render_plugin(game_controller.world)
+  game_controller.world.spawn_entity([
+    sprite_manager.get_sprite('background'),
+    new Transform(createVector(0, 0, -Infinity)),
+  ])
+
+  game_controller.spawn_entity([
+    new UIImage(sprite_manager.get_sprite_imgs('lose_card')),
+    new Transform(createVector(81, 60)),
+  ])
+
+  game_controller.spawn_entity([
+    new Button(
+      sprite_manager.get_sprite_imgs('restart_button'),
+      start_screen,
+    ),
+    new Transform(createVector(80, 100)),
   ])
 }

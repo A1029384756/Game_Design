@@ -11,9 +11,11 @@ class Sprite extends Component {
   /** 
    * @param {Image[]} imgs
    * @param {Boolean} facing_right
+   * @param {string} [name=''] 
    */
-  constructor(imgs = [createImage(0, 0)], facing_right = true) {
+  constructor(imgs = [createImage(0, 0)], facing_right = true, name = '') {
     super()
+    this.sprite_name = name
     this.imgs = imgs
     this.curr_frame = 0
     this.frame_count = imgs.length

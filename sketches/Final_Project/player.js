@@ -101,7 +101,7 @@ class PlayerMovement extends System {
               new Attack1(),
               new PlayerAttack(createVector(attack_x_dir)),
               new Lifetime(8),
-              new Collider(8, 15),
+              new Collider(15, 15),
               new Transform(
                 createVector(
                   player_transform.pos.x + attack_x_offset,
@@ -113,9 +113,9 @@ class PlayerMovement extends System {
             player.attack_timer = 0
             game_controller.spawn_entity([
               new Attack2(),
-              new PlayerAttack(createVector(attack_x_dir, 1)),
+              new PlayerAttack(createVector(attack_x_dir, -2)),
               new Lifetime(8),
-              new Collider(8, 15),
+              new Collider(15, 15),
               new Transform(
                 createVector(
                   player_transform.pos.x + attack_x_offset,
@@ -134,12 +134,61 @@ class PlayerMovement extends System {
       if (keyIsDown(65)) {
         x_vel -= PLAYER_SPEED
       }
+
       player_transform.vel.x = x_vel
     })
   }
 }
 
-const PLAYER_COLLISION_PADDING = 1
+class PlayerTakeHit extends System {
+  constructor() {
+    super()
+    this.query_set = [
+      new Query([
+        new Player(),
+        new Transform(),
+        new Collider(),
+        new Health(),
+      ]),
+      new Query([
+        new GoblinAttack(),
+        new Transform(),
+        new Collider(),
+        new Lifetime(),
+      ]),
+    ]
+  }
+
+  /**
+   * @param {QueryResponse[]} r
+   */
+  work(r) {
+    r[0].forEach((p_c, _) => {
+      let transform = system_get_transform(p_c)
+      let collider = system_get_collider(p_c)
+      let player = system_get_player(p_c)
+      let health = system_get_health(p_c)
+
+      if (player.i_frame_timer <= 0) {
+        r[1].forEach((a_c, a_id) => {
+          let attack_transform = system_get_transform(a_c)
+          let attack_collider = system_get_collider(a_c)
+          let attack = system_get_goblin_attack(a_c)
+
+          if (collides(transform.pos, collider, attack_transform.pos, attack_collider)) {
+            game_controller.despawn_entity(a_id)
+            transform.vel.add(attack.dir)
+            health.health -= 1
+          }
+
+          if (health.health <= 0) {
+            game_controller.lose_game()
+          }
+        })
+      }
+    })
+  }
+}
 
 class PlayerPhysics extends System {
   constructor() {
@@ -291,7 +340,7 @@ class PlayerWin extends System {
         let exit_collider = system_get_collider(e)
 
         if (collides(transform.pos, collider, exit_transform.pos, exit_collider)) {
-          start_screen()
+          game_controller.win_game()
         }
       })
     })

@@ -18,12 +18,14 @@ class IdGenerator {
 }
 
 /**
- * @param {any} obj
- * @returns {any}
+ * @template T
+ * @param {T} obj
+ * @returns {T}
  */
 function clone_object(obj) {
   return Object.assign(Object.create(Object.getPrototypeOf(obj)), obj)
 }
+
 
 /**
   * @param {Vector} p1

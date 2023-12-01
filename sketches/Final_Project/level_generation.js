@@ -133,6 +133,7 @@ class GeneratingLevel extends System {
 
         particle_plugin(game_controller.game_world)
         player_plugin(game_controller.game_world)
+        goblin_plugin(game_controller.game_world)
         render_plugin(game_controller.game_world)
         this.generated_levels.forEach(lvl_pos => {
           get_serialized_level(lvl_pos[0].x, lvl_pos[0].y, lvl_pos[1]).forEach((bundle) => {

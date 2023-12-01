@@ -89,18 +89,20 @@ const get_serialized_level = (x, y, level) => {
   level.entities.forEach(e => {
     let entity_bundle = /** @type {Component[]} */ ([])
     if (e.type == 'Goblin') {
-      entity_bundle.push(sprite_manager.get_sprite('Goblin_idle'))
-      entity_bundle.push(
+      entity_bundle = entity_bundle.concat([
+        clone_object(sprite_manager.get_sprite('Goblin_idle')),
         new Transform(
           createVector(
             x + e.rel_pos[0] + TILE_SIZE,
             y + e.rel_pos[1] + TILE_SIZE,
           )
-        )
-      )
-      entity_bundle.push(
-        new Collider(TILE_SIZE, 2 * TILE_SIZE),
-      )
+        ),
+        new Collider(8, 15),
+        new Idle(),
+        new Gravity(),
+        new Goblin(),
+        new Health(2),
+      ])
     } else if (e.type == 'Exit') {
       entity_bundle.push(sprite_manager.get_sprite('exit_door'))
       entity_bundle.push(
