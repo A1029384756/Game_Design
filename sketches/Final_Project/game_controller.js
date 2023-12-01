@@ -23,7 +23,8 @@ class GameController {
     this.game_world = new World()
     this.menu_world = new World()
     this.option_world = new World()
-    this.end_world = new World()
+    this.win_world = new World()
+    this.lose_world = new World()
 
     this.size = min(windowWidth, windowHeight)
   }

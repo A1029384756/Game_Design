@@ -206,7 +206,7 @@ const tutorial_menu = () => {
 }
 
 const win_screen = () => {
-  game_controller.world = game_controller.end_world
+  game_controller.world = game_controller.win_world
 
   if (game_controller.world.registry.entity_count > 0) {
     return
@@ -232,7 +232,7 @@ const win_screen = () => {
   ])
 }
 const lose_screen = () => {
-  game_controller.world = game_controller.end_world
+  game_controller.world = game_controller.lose_world
 
   if (game_controller.world.registry.entity_count > 0) {
     return
